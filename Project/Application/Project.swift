@@ -56,6 +56,7 @@ private var compositeDependency: [TargetDependency] {
     .package(product: "Functor", type: .runtime, condition: .none),
     .package(product: "Platform", type: .runtime, condition: .none),
     .package(product: "LinkNavigatorSwiftUI", type: .runtime, condition: .none),
+    .package(product: "Dashboard", type: .runtime, condition: .none),
   ]
 }
 
@@ -67,7 +68,6 @@ private var compositePackageList: [Package] {
     .local(path: .relativeToRoot("Modules/Core/Functor")),
     .local(path: .relativeToRoot("Modules/Core/Platform")),
      .local(path: .relativeToRoot("Modules/Core/LinkNavigatorSwiftUI")),
-    // .local(path: .relativeToRoot("Modules/Feature/Dashboard")),
-    // .local(path: .relativeToRoot("Modules/Feature/Common")),
+     .local(path: .relativeToRoot("Modules/Feature/Dashboard")),
   ]
 }
