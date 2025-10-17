@@ -1,0 +1,27 @@
+import Foundation
+import SwiftUI
+
+// MARK: - MatchPathUsable
+
+public protocol MatchPathUsable {
+  var matchPath: String { get }
+//  var eventSubscriber: LinkNavigatorItemSubscriberProtocol? { get }
+}
+
+// MARK: - RouteBuilderOf
+
+// public typealias WrappingView = MatchPathUsable & NSHostingView<AnyView>
+
+public struct RouteBuilderOf<RootNavigatorType, Content: View> {
+
+  let matchPath: String
+  let routeBuild: (RootNavigatorType, String, DependencyType) -> Content?
+
+  public init(
+    matchPath: String,
+    routeBuild: @escaping (RootNavigatorType, String, DependencyType) -> Content?)
+  {
+    self.matchPath = matchPath
+    self.routeBuild = routeBuild
+  }
+}
