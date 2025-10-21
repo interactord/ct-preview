@@ -6,6 +6,7 @@ import LinkNavigatorSwiftUI
 
 struct AppSideEffect: DashboardUseCaseGroup, Sendable, DependencyType {
   let loggingUseCase: LoggingUseCase
+  let transcriptionUseCase: TranscriptionUseCase
 }
 
 extension AppSideEffect {
@@ -13,6 +14,8 @@ extension AppSideEffect {
   static func generate() -> Self {
     let loggingUseCase = LoggingUseCasePlatform()
     return AppSideEffect(
-      loggingUseCase: loggingUseCase)
+      loggingUseCase: loggingUseCase,
+      transcriptionUseCase: TranscriptionUseCasePlatform(
+        loggingUseCase: loggingUseCase))
   }
 }

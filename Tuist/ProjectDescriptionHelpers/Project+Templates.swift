@@ -28,11 +28,6 @@ extension [String: Plist.Value] {
         "UIInterfaceOrientationLandscapeLeft",
         "UIInterfaceOrientationLandscapeRight",
       ]),
-
-      "BGTaskSchedulerPermittedIdentifiers": .array([
-        .string("com.flitto.livetr.translation"),
-        .string("com.flitto.livetr.tts-url"),
-      ]),
       "UIStatusBarHidden": .boolean(true),
       "UIRequiresFullScreen": .boolean(true),
       "LSRequiresIPhoneOS": .boolean(true),
@@ -56,7 +51,8 @@ extension [String: Plist.Value] {
         "NSAllowsArbitraryLoads": .boolean(true),
       ]),
       "FirebaseAppDelegateProxyEnabled": .boolean(false),
-      "NSCameraUsageDescription": "Camera access is needed to capture QR Code."
+      "NSCameraUsageDescription": "Camera access is needed to capture QR Code.",
+      "NSMicrophoneUsageDescription": "Microhpone access is needed to capture Voice"
     ]
   }
 

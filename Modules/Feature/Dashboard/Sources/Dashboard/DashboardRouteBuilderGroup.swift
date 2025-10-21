@@ -13,6 +13,7 @@ extension DashboardRouteBuilderGroup {
   public func release() -> [RouteBuilderOf<SingleNavigator, AnyView>] {
     [
       SplashRouteBuilder().generate(),
+      ListeningModeRouteBuilder().generate(),
 //      LoginRouteBuilder().generate(),
 //      RoomListRouteBuilder().generate(),
 //      SpeechRoomRouteBuilder().generate(),

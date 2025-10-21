@@ -7,7 +7,7 @@ let targetList: [Target] = [
     destinations: .iOS,
     product: .app,
     productName: "CT-Preview",
-    bundleId: "com.flitto.ctp.preview",
+    bundleId: "com.flitto.previewer",
     deploymentTargets: .none,
     infoPlist: .extendingDefault(with: .commonInfoValue()),
     sources: ["Sources/**"],

@@ -21,6 +21,9 @@ public struct SplashReducer {
         return .concatenate(
           CancelID.allCases.map { .cancel(pageID: state.id, id: $0) })
 
+      case .routeToListeningMode:
+        return sideEffect.routeToListeningModePage()
+
       case .throwError(let error):
         sideEffect.useCaseGroup.loggingUseCase.error(error)
         return .none
@@ -45,6 +48,8 @@ extension SplashReducer {
   public enum Action: Equatable, BindableAction, Sendable {
     case binding(BindingAction<State>)
     case teardown
+
+    case routeToListeningMode
 
     case throwError(CompositeError)
     case none

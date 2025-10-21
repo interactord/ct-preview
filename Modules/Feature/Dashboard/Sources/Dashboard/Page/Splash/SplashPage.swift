@@ -22,13 +22,20 @@ extension SplashPage: View {
       Spacer()
       HStack {
         Spacer()
-        Text("SplashPage")
+        Button(action: { store.send(.routeToListeningMode) }) {
+          Text("듣기 모드")
+        }
         Spacer()
       }
       Spacer()
     }
     .background(.background)
     .onAppear {
+      print("AAAAA")
+    }
+    .onDisappear {
+      print("BBBBB")
+      store.send(.teardown)
     }
   }
 }

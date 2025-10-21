@@ -9,6 +9,7 @@ extension Link {
 extension Link.Dashboard {
   public enum Path: String, Equatable, Sendable {
     case splash = "dashboard-splash"
+    case listeningMode = "dashboard-listeningMode"
   }
 }
 
