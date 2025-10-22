@@ -6,7 +6,7 @@ import PackageDescription
 let package: Package = .init(
   name: "Functor",
   platforms: [
-    .iOS(.v18),
+    .iOS(.v26),
     .macOS(.v26),
   ],
   products: [
