@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import Domain
+import Functor
 
 extension ListeningModePage {
   struct ContentList {
@@ -8,6 +9,7 @@ extension ListeningModePage {
     var updateAction: (TranscriptionEntity.Item) -> Void
 
     @Namespace var lastItem
+    private let llmFunctor: LanguageModelFunctor = .init()
   }
 }
 
@@ -30,6 +32,7 @@ extension ListeningModePage.ContentList: View {
         ForEach(viewState.finalList) { item in
           ListeningModePage.ContentItem(
             item: item,
+            llmFunctor: llmFunctor,
             updateAction: updateAction)
           .id(item.id)
         }

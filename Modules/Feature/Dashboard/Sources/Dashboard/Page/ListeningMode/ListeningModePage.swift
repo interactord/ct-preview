@@ -64,7 +64,7 @@ extension ListeningModePage: View {
           Image(systemName: imageName)
             .resizable()
             .scaledToFit()
-            .frame(width: 80, height: 80)
+            .frame(width: 60, height: 60)
         }
         .tint(store.isPlay ?  Color.accentColor : SystemColor.Label.OnBG.primary.color)
 

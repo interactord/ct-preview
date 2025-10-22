@@ -6,7 +6,8 @@ import PackageDescription
 let package: Package = .init(
   name: "Platform",
   platforms: [
-    .iOS(.v26),
+    .iOS(.v18),
+    .macOS(.v26),
   ],
   products: [
     .library(

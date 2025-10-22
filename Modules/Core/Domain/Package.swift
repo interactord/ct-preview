@@ -7,6 +7,7 @@ let package: Package = .init(
   name: "Domain",
   platforms: [
     .iOS(.v18),
+    .macOS(.v26),
   ],
   products: [
     .library(

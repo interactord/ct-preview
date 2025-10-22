@@ -5,7 +5,8 @@ import Functor
 
 extension ListeningModePage {
   struct ContentItem {
-    var item: TranscriptionEntity.Item
+    let item: TranscriptionEntity.Item
+    let llmFunctor: LanguageModelFunctor
     var updateAction: (TranscriptionEntity.Item) -> Void
   }
 }
@@ -30,6 +31,9 @@ extension ListeningModePage.ContentItem: View {
       }
       .opacity(item.translation == nil ? 1 : 0.8)
       .transition(.scale)
+
+      Spacer(minLength: 8)
+
       if let translation = item.translation {
         HStack {
           Text(translation.text)
@@ -41,18 +45,39 @@ extension ListeningModePage.ContentItem: View {
     }
     .animation(.spring(), value: item)
     .task {
-      let endLocale = item.endLocale ?? item.startLocale
-      let functor = TranslationFunctor(startLocale: item.startLocale, endLocale: endLocale)
-      do {
-        let result = try await functor.request(text: item.text.toString())
-        print(result)
-        var newItem = item
-        newItem.translation = .init(id: item.id, locale: endLocale, text: result)
-        updateAction(newItem)
-      } catch {
-        print("[Error] \(error)")
-      }
+      await llmFunctor.checkAppleIntelligenceAvailability() ? llmTranslation() : translation()
     }
+  }
+
+  @MainActor
+  func translation() async {
+    let endLocale = item.endLocale ?? item.startLocale
+    let functor = TranslationFunctor(startLocale: item.startLocale, endLocale: endLocale)
+    do {
+      let result = try await functor.request(text: item.text.toString())
+      print(result)
+      var newItem = item
+      newItem.translation = .init(id: item.id, locale: endLocale, text: result)
+      updateAction(newItem)
+    } catch {
+      print("[Error] \(error)")
+    }
+  }
+
+  @MainActor
+  func llmTranslation() async {
+    guard await llmFunctor.checkAppleIntelligenceAvailability() else { return }
+    let endLocale = item.endLocale ?? item.startLocale
+    guard let result = await llmFunctor.correct(originalText: item.text.toString(), translationLocale: endLocale)
+    else { return }
+
+    var newItem = item
+    newItem.text = .init(result.text)
+
+    if endLocale.language.languageCode?.identifier == result.translatedLanguageCode {
+      newItem.translation = .init(id: item.id, locale: endLocale, text: result.translationText)
+    }
+    updateAction(newItem)
   }
 }
 

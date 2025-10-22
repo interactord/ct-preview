@@ -6,7 +6,7 @@ extension TranscriptionEntity {
     public let uuid: String?
     public let startLocale: Locale
     public let endLocale: Locale?
-    public let text: AttributedString
+    public var text: AttributedString
     public let isFinal: Bool
     public var translation: TranslationItem?
 
