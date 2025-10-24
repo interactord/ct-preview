@@ -31,10 +31,8 @@ extension SplashPage: View {
     }
     .background(.background)
     .onAppear {
-      print("AAAAA")
     }
     .onDisappear {
-      print("BBBBB")
       store.send(.teardown)
     }
   }

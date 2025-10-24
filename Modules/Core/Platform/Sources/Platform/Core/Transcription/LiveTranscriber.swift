@@ -3,6 +3,7 @@ import SwiftUI
 import Domain
 import Functor
 
+@available(iOS 26.0, *)
 final actor LiveTranscriber: Sendable {
   let module: SpeechTranscriber
   let locale: Locale
@@ -71,6 +72,7 @@ final actor LiveTranscriber: Sendable {
   }
 }
 
+@available(iOS 26.0, *)
 extension LiveTranscriber {
 
   /// - Note:

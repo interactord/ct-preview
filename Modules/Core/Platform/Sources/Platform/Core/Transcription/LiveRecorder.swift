@@ -4,11 +4,13 @@ import Functor
 import Speech
 import Domain
 
+@available(iOS 26.0, *)
 final actor LiveRecorder {
   private var transcriber: LiveTranscriber? = .none
   private let audioEngine: AVAudioEngine = .init()
 }
 
+@available(iOS 26.0, *)
 extension LiveRecorder {
 
   func prepare(locale: Locale) async throws {
@@ -65,6 +67,7 @@ extension LiveRecorder {
   }
 }
 
+@available(iOS 26.0, *)
 extension LiveRecorder {
   private func recodeStream() -> AsyncThrowingStream<AVAudioPCMBuffer, Error> {
     return .init { continuation in
@@ -89,9 +92,13 @@ extension LiveRecorder {
   }
 
   private func setupSession() throws {
+    #if os(iOS) || os(tvOS) || os(watchOS) || os(visionOS)
     let session = AVAudioSession.sharedInstance()
     try session.setCategory(.playAndRecord, mode: .spokenAudio)
     try session.setActive(true, options: .notifyOthersOnDeactivation)
+    #else
+    // macOS: AVAudioSession is unavailable; no session setup required.
+    #endif
   }
 
   private func setupTranscriber(locale: Locale) async throws -> LiveTranscriber {

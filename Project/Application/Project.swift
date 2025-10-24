@@ -26,6 +26,31 @@ let targetList: [Target] = [
     mergedBinaryType: .automatic,
     mergeable: false,
     onDemandResourcesTags: .none),
+
+    .target(
+      name: "CT-MAC",
+      destinations: .macOS,
+      product: .app,
+      productName: "CT-Preview",
+      bundleId: "com.flitto.previewer",
+      deploymentTargets: .none,
+      infoPlist: .extendingDefault(with: .commonInfoValue()),
+      sources: ["Sources/**"],
+      resources: ["Resources/**"],
+      copyFiles: .none,
+      headers: .none,
+      entitlements: .file(path: .relativeToRoot("Entitlements/CT-MAC.entitlements")),
+      scripts: [],
+      dependencies: compositeDependency,
+      settings: .defaultConfigSettings(isDev: true),
+      coreDataModels: [],
+      environmentVariables: [:],
+      launchArguments: [],
+      additionalFiles: [],
+      buildRules: [],
+      mergedBinaryType: .automatic,
+      mergeable: false,
+      onDemandResourcesTags: .none),
 ]
 
 let project = Project(

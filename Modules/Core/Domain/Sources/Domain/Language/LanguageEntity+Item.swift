@@ -33,7 +33,7 @@ extension LanguageEntity {
 
 extension LanguageEntity.Item: Identifiable {
   public var id: String {
-    "\(langCode)_\(status)"
+    "\(langCode)"
   }
 }
 

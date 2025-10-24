@@ -3,13 +3,13 @@ import SwiftUI
 import Domain
 import Functor
 
+@available(iOS 26.0, *)
 extension ListeningModePage {
   struct ContentList {
     var viewState: ViewState
     var updateAction: (TranscriptionEntity.Item) -> Void
 
     @Namespace var lastItem
-    private let llmFunctor: LanguageModelFunctor = .init()
   }
 }
 
@@ -27,37 +27,53 @@ extension ListeningModePage.ContentList {
 
 extension ListeningModePage.ContentList: View {
   var body: some View {
-    ScrollViewReader { proxy in
-      List {
-        ForEach(viewState.finalList) { item in
-          ListeningModePage.ContentItem(
-            item: item,
-            llmFunctor: llmFunctor,
-            updateAction: updateAction)
-          .id(item.id)
-        }
-        if let draftItem = viewState.draftItem {
-          HStack {
-            Text(draftItem.text)
-              .foregroundStyle(.secondary)
-            Spacer(minLength: .zero)
+    VStack {
+      ScrollViewReader { proxy in
+        List {
+          ForEach(viewState.finalList) { item in
+            ListeningModePage.ContentItem(
+              focusItemList: viewState.finalList.focusedHistory(historyCount: 10, center: item),
+              updateAction: updateAction)
+            .id(item.id)
           }
-          .id(draftItem.id)
-        }
+          if let draftItem = viewState.draftItem {
+            HStack {
+              Text(draftItem.text)
+                .foregroundStyle(.secondary)
+              Spacer(minLength: .zero)
+            }
+            .id(draftItem.id)
+          }
 
-        // 화면 하단에 닿지 않도록 만드는 투명 여백 (구분선/인셋 제거)
-        Rectangle()
-          .fill(.clear)
-          .frame(width: 30, height: 100)
-          .listRowSeparator(.hidden)
-          .listRowInsets(.none)
-          .id(lastItem)
-      }
-      .listStyle(.plain)
-      .onChange(of: viewState.draftItem) { _, new in
-        guard new != .none else { return }
-        proxy.scrollTo(lastItem, anchor: .center)
+          Rectangle()
+            .fill(.clear)
+            .frame(width: 30, height: 100)
+            .listRowSeparator(.hidden)
+            .listRowInsets(.none)
+            .id(lastItem)
+        }
+        .scrollContentBackground(.hidden)
+        .listRowBackground(Color.clear)
+        .listStyle(.plain)
+        .onChange(of: viewState.draftItem) { _, new in
+          guard new != .none else { return }
+          withAnimation(.easeInOut) {
+            proxy.scrollTo(lastItem, anchor: .top)
+          }
+        }
       }
     }
+    .onAppear {
+      
+    }
+  }
+}
+
+extension [TranscriptionEntity.Item] {
+  fileprivate func focusedHistory(historyCount: Int, center: TranscriptionEntity.Item) -> [TranscriptionEntity.Item] {
+    guard let idx = self.lastIndex(of: center) else { return [] }
+    let lowerBound = Swift.max(0, idx - historyCount)
+    let upperBound = idx
+    return Array(self[lowerBound...upperBound])
   }
 }

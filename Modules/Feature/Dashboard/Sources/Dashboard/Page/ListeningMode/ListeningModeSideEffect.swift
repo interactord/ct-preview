@@ -41,12 +41,13 @@ extension ListeningModeSideEffect {
   func downloadSpeechModel(item: LanguageEntity.Item) -> Effect<ListeningModeReducer.Action> {
     .run { send in
       let functor = SpeechFunctor(locale: item.langCode.locale)
-      Task {
-        for try await progress in functor.downloadIfNeeded() {
-          print(progress)
-        }
+      guard await !functor.installed(locale: item.langCode.locale) else { return await send(.none) }
+
+      await functor.releaseLocales()
+      for try await progress in functor.downloadIfNeeded() {
+        print("[DOWNLOAD] \(progress)")
       }
-      await send(.set(\.route, .none))
+      await send(.getLanguageItems)
     }
   }
 

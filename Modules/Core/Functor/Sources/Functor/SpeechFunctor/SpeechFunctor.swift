@@ -17,7 +17,7 @@ public struct SpeechFunctor: Sendable {
 
   public init(locale: Locale) {
     self.locale = locale
-    self.module = SpeechTranscriber(locale: locale, preset: .progressiveTranscription)
+    self.module = SpeechTranscriber.init(locale: locale, preset: SpeechTranscriber.Preset.default)
   }
 
   public func getModelStatus() async -> SpeechStatus {
@@ -38,8 +38,11 @@ public struct SpeechFunctor: Sendable {
           let progress = downloader.progress
           continuation.yield(progress.fractionCompleted)
 
-          for await _ in progress.publisher(for: \.fractionCompleted).values {
-            continuation.yield(progress.fractionCompleted)
+          Task {
+            while !downloader.progress.isFinished {
+              continuation.yield(downloader.progress.fractionCompleted)
+              try? await Task.sleep(for: .seconds(0.1))
+            }
           }
 
           // Start download and install

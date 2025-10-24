@@ -5,7 +5,6 @@ import SwiftUI
 import DesignSystem
 import Functor
 import Architecture
-import Translation
 
 // MARK: - SplashPage
 
@@ -14,9 +13,8 @@ struct ListeningModePage {
   init(store: StoreOf<ListeningModeReducer>) {
     self.store = store
   }
-
   @Bindable private var store: StoreOf<ListeningModeReducer>
-  @State private var configuration: TranslationSession.Configuration?
+  @State private var downloadLocale: Locale?
 }
 
 extension ListeningModePage {
@@ -28,35 +26,19 @@ extension ListeningModePage: View {
 
   var body: some View {
     VStack {
-      HStack {
-        Spacer()
-        Button(action: { store.send(.routeToStartLanguageItem) }) {
-          switch store.languageInfo.start {
-          case .none:
-            Text("언어를 선택해주세요")
-          case .some(let value):
-            Text(value.langCode.modelName)
-          }
-        }
-
-        Image(systemName: "arrow.right")
-        Button(action: { store.send(.routeToEndLanguageItem) }) {
-          switch store.languageInfo.end {
-          case .none:
-            Text("언어를 선택해주세요")
-          case .some(let value):
-            Text(value.langCode.modelName)
-          }
-        }
-        Spacer()
-      }
+      SelectLanguage(
+        languageList: store.fetchLanguageItemList.value,
+        disabled: store.isPlay,
+        onChangeStart: { store.send(.set(\.start, $0)) },
+        onChangeEnd: { store.send(.set(\.end, $0)) })
+      .padding(EdgeInsets(top: 16, leading: 8, bottom: 4, trailing: 8))
       ContentList(
         viewState: store.contentViewState,
         updateAction: { store.send(.updateItem($0)) })
+      .padding(8)
       Spacer()
       HStack {
         Spacer()
-
         Button(action: {
           store.send(store.isPlay ? .stopRecording: .playRecording)
         }) {
@@ -67,50 +49,35 @@ extension ListeningModePage: View {
             .frame(width: 60, height: 60)
         }
         .tint(store.isPlay ?  Color.accentColor : SystemColor.Label.OnBG.primary.color)
+        .buttonStyle(.plain)
 
         Spacer()
       }
+      .padding(8)
     }
     .background(.background)
-    .sheet(
-      unwrapping: $store.route,
-      case: \.startSheet,
-      content: { _ in
-          LanguageSheet(
-            selectItem: store.languageInfo.start,
-            itemList: store.fetchLanguageItemList.value,
-            selectAction: { store.send(.selectStartItem($0)) })
-
-    })
-    .sheet(
-      unwrapping: $store.route,
-      case: \.endSheet,
-      content: { _ in
-          LanguageSheet(
-            selectItem: store.languageInfo.end,
-            itemList: store.fetchLanguageItemList.value,
-            selectAction: { store.send(.selectEndItem($0)) })
-
-    })
+//    .translationTask(configuration) { session in
+//      Task {
+//        do {
+//          try await session.prepareTranslation()
+//        } catch {
+//          print("[ERRRRRRRRR] \(error)")
+//        }
+//      }
+//    }
+//    .onChange(of: store.languageInfo, { old, new in
+//      guard old != new else { return }
+//      guard let start = new.start, let end = new.end else { return }
+//      print("AAAA OLD ", old)
+//      print("AAAA NEW ", new)
+//      Task {
+//        try? await Task.sleep(for: .seconds(1))
+//        configuration = .init(
+//          source: start.langCode.locale.language,
+//          target: end.langCode.locale.language)
+//      }
+//    })
     .onAppear {
-    }
-    .onChange(of: store.languageInfo, { _, new in
-      guard let start = new.start, let end = new.end else { return }
-      Task {
-        try? await Task.sleep(for: .seconds(1))
-        configuration = .init(
-          source: start.langCode.locale.language,
-          target: end.langCode.locale.language)
-      }
-    })
-    .translationTask(configuration) { session in
-      Task {
-        do {
-          try await session.prepareTranslation()
-        } catch {
-          print("[ERRRRRRRRR] \(error)")
-        }
-      }
     }
     .task {
       await AudioPermissionFunctor.permission()

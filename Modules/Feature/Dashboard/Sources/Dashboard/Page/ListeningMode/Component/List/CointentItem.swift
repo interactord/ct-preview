@@ -5,15 +5,18 @@ import Functor
 
 extension ListeningModePage {
   struct ContentItem {
-    let item: TranscriptionEntity.Item
-    let llmFunctor: LanguageModelFunctor
+    let focusItemList: [TranscriptionEntity.Item]
     var updateAction: (TranscriptionEntity.Item) -> Void
   }
 }
 
 extension ListeningModePage.ContentItem {
-  var originFont: Font {
-    item.translation == nil
+  private var item: TranscriptionEntity.Item? {
+    focusItemList.last
+  }
+
+  private var originFont: Font {
+    item?.translation == nil
     ? Font.system(size: 16, weight: .bold, design: .default)
     : Font.system(size: 12, weight: .regular, design: .default)
   }
@@ -23,34 +26,45 @@ extension ListeningModePage.ContentItem {
 extension ListeningModePage.ContentItem: View {
   var body: some View {
     VStack {
-      HStack {
-        Text(item.text)
-          .font(originFont)
-          .transition(.opacity)
-        Spacer(minLength: .zero)
-      }
-      .opacity(item.translation == nil ? 1 : 0.8)
-      .transition(.scale)
-
-      Spacer(minLength: 8)
-
-      if let translation = item.translation {
+      if let item {
         HStack {
-          Text(translation.text)
-            .font(.system(size: 18, weight: .bold, design: .default))
-            .foregroundStyle(Color.accentColor)
+          Text(item.text)
+            .font(originFont)
+            .transition(.opacity)
           Spacer(minLength: .zero)
+        }
+        .opacity(item.translation == nil ? 1 : 0.8)
+        .transition(.scale)
+
+        Spacer(minLength: 8)
+
+        if let translation = item.translation {
+          HStack {
+            Text(translation.text)
+              .font(.system(size: 18, weight: .bold, design: .default))
+              .foregroundStyle(Color.accentColor)
+            Spacer(minLength: .zero)
+          }
         }
       }
     }
+    .padding(8)
     .animation(.spring(), value: item)
     .task {
-      await llmFunctor.checkAppleIntelligenceAvailability() ? llmTranslation() : translation()
+      guard item?.translation == .none else { return }
+      await translation()
+      await llmTranslation()
+//      await translation()
+////      Task {
+////
+////        if await llmFunctor.checkAppleIntelligenceAvailability() { await  llmTranslation() }
+////      }
     }
   }
 
   @MainActor
   func translation() async {
+    guard let item else { return }
     let endLocale = item.endLocale ?? item.startLocale
     let functor = TranslationFunctor(startLocale: item.startLocale, endLocale: endLocale)
     do {
@@ -66,18 +80,32 @@ extension ListeningModePage.ContentItem: View {
 
   @MainActor
   func llmTranslation() async {
+    guard let item else { return }
+    let llmFunctor: LanguageModelFunctor = .init()
     guard await llmFunctor.checkAppleIntelligenceAvailability() else { return }
     let endLocale = item.endLocale ?? item.startLocale
-    guard let result = await llmFunctor.correct(originalText: item.text.toString(), translationLocale: endLocale)
-    else { return }
 
-    var newItem = item
-    newItem.text = .init(result.text)
+//    let functor = TranslationFunctor(startLocale: item.startLocale, endLocale: endLocale)
 
-    if endLocale.language.languageCode?.identifier == result.translatedLanguageCode {
-      newItem.translation = .init(id: item.id, locale: endLocale, text: result.translationText)
+    do {
+//      let localTranslationResult = try await functor.request(text: item.text.toString())
+
+      let history: [LanguageModelFunctor.SourceItem] = focusItemList.dropLast()
+        .map { .init(locale: $0.startLocale, text: $0.text.toString()) }
+
+      let translationItem: LanguageModelFunctor.TranslationItem = .init(
+        startItem: .init(locale: item.startLocale, text: item.text.toString()),
+        endItem: .init(locale: endLocale, text: item.translation?.text ?? ""),
+        historyItemList: history)
+      let result = try await llmFunctor.correctAndTranslate(item: translationItem)
+
+      var newItem = item
+      newItem.text = .init(result.correctedText)
+      newItem.translation = .init(id: item.id, locale: endLocale, text: result.translatedText)
+      updateAction(newItem)
+    } catch {
+      print("[ListeningModePage.ContentItem][ERROR] \(error)")
     }
-    updateAction(newItem)
   }
 }
 
