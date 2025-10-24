@@ -1,12 +1,14 @@
 import SwiftUI
 
-public struct BaseView<Content: View>: View {
+// MARK: - BaseView
 
-  private var content: () -> Content
+public struct BaseView<Content: View>: View {
 
   public init(@ViewBuilder content: @escaping () -> Content) {
     self.content = content
   }
+
+  private var content: () -> Content
 
 }
 

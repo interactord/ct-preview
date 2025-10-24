@@ -1,29 +1,37 @@
-import Foundation
-import SwiftUI
 import Domain
+import Foundation
 import Functor
+import SwiftUI
+
+// MARK: - ListeningModePage.ContentList
 
 @available(iOS 26.0, *)
 extension ListeningModePage {
   struct ContentList {
     var viewState: ViewState
-    var updateAction: (TranscriptionEntity.Item) -> Void
+    let updateAction: (TranscriptionEntity.Item) -> Void
+    let errorAction: (CompositeError) -> Void
 
     @Namespace var lastItem
   }
 }
 
+// MARK: - ListeningModePage.ContentList.ViewState
+
 extension ListeningModePage.ContentList {
   struct ViewState: Equatable, Sendable {
-    var finalList: [TranscriptionEntity.Item]
-    var draftItem: TranscriptionEntity.Item?
-
     init(finalList: [TranscriptionEntity.Item] = [], draftItem: TranscriptionEntity.Item? = nil) {
       self.finalList = finalList
       self.draftItem = draftItem
     }
+
+    var finalList: [TranscriptionEntity.Item]
+    var draftItem: TranscriptionEntity.Item?
+
   }
 }
+
+// MARK: - ListeningModePage.ContentList + View
 
 extension ListeningModePage.ContentList: View {
   var body: some View {
@@ -33,7 +41,9 @@ extension ListeningModePage.ContentList: View {
           ForEach(viewState.finalList) { item in
             ListeningModePage.ContentItem(
               focusItemList: viewState.finalList.focusedHistory(historyCount: 10, center: item),
-              updateAction: updateAction)
+              updateAction: updateAction,
+              errorAction: errorAction
+            )
             .id(item.id)
           }
           if let draftItem = viewState.draftItem {
@@ -63,9 +73,7 @@ extension ListeningModePage.ContentList: View {
         }
       }
     }
-    .onAppear {
-      
-    }
+    .onAppear { }
   }
 }
 

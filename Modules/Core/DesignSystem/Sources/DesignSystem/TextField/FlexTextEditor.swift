@@ -12,8 +12,8 @@ public struct FlexTextEditor: View {
     submitAction: @escaping () -> Void,
     cancelAction: @escaping () -> Void,
     cutAction: @escaping () -> Void = { },
-    playAndStop: @escaping () -> Void = { })
-  {
+    playAndStop: @escaping () -> Void = { }
+  ) {
     self.text = text
     self.submitAction = submitAction
     self.cancelAction = cancelAction

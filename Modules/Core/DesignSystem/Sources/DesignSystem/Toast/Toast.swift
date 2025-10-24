@@ -16,6 +16,7 @@ public struct Toast {
   }
 
   let toastItem: ToastItem?
+
   private let type: ToastType
 }
 

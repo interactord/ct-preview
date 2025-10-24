@@ -1,25 +1,29 @@
-import Speech
-import SwiftUI
 import Domain
 import Functor
+import Speech
+import SwiftUI
+
+// MARK: - LiveTranscriber
 
 @available(iOS 26.0, *)
 final actor LiveTranscriber: Sendable {
-  let module: SpeechTranscriber
-  let locale: Locale
-  let analyzer: SpeechAnalyzer
-  private var inputSequence: AsyncStream<AnalyzerInput>?
-  private var inputBuilder: AsyncStream<AnalyzerInput>.Continuation?
-  var analyzerFormat: AVAudioFormat?
-  private let converter = BufferConverter()
 
-  public init(locale: Locale) {
+  // MARK: Lifecycle
+
+  init(locale: Locale) {
     let module = SpeechTranscriber(locale: locale, preset: .default)
 
     self.module = module
     self.locale = locale
-    self.analyzer = .init(modules: [module])
+    analyzer = .init(modules: [module])
   }
+
+  // MARK: Internal
+
+  let module: SpeechTranscriber
+  let locale: Locale
+  let analyzer: SpeechAnalyzer
+  var analyzerFormat: AVAudioFormat?
 
   func prepare() async throws {
     try await ensureModel()
@@ -33,7 +37,7 @@ final actor LiveTranscriber: Sendable {
 
   @MainActor
   func transcription() -> AsyncThrowingStream<TranscriptionEntity.Item, Error> {
-    return .init { continuation in
+    .init { continuation in
       let task = Task {
         do {
           for try await case let result in module.results {
@@ -41,7 +45,8 @@ final actor LiveTranscriber: Sendable {
               startLocale: locale,
               endLocale: .none,
               text: result.text,
-              isFinal: result.isFinal))
+              isFinal: result.isFinal
+            ))
           }
         } catch {
           continuation.finish(throwing: error)
@@ -59,7 +64,7 @@ final actor LiveTranscriber: Sendable {
     guard let inputBuilder, let analyzerFormat else {
       throw NSError(domain: "TranscriptionError.invalidAudioDataType", code: -1)
     }
-    
+
     let converted = try converter.convertBuffer(buffer, to: analyzerFormat)
     let input = AnalyzerInput(buffer: converted)
     inputBuilder.yield(input)
@@ -70,6 +75,13 @@ final actor LiveTranscriber: Sendable {
     analyzerFormat = .none
     try await analyzer.finalizeAndFinishThroughEndOfInput()
   }
+
+  // MARK: Private
+
+  private var inputSequence: AsyncStream<AnalyzerInput>?
+  private var inputBuilder: AsyncStream<AnalyzerInput>.Continuation?
+  private let converter = BufferConverter()
+
 }
 
 @available(iOS 26.0, *)
@@ -77,9 +89,7 @@ extension LiveTranscriber {
 
   /// - Note:
   ///     앞에서 다운로드 점검은 할것이지만, 언어팩때문에 문제 생기면 이쪽 코드 보안해야함
-  private func ensureModel() async throws {
-
-  }
+  private func ensureModel() async throws { }
 }
 
 @available(iOS 26.0, *)
@@ -94,7 +104,8 @@ extension SpeechTranscriber.Preset {
         .volatileResults,
       ],
       attributeOptions: [
-        .audioTimeRange,
-      ])
+        .audioTimeRange
+      ]
+    )
   }
 }

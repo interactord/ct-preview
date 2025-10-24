@@ -1,31 +1,39 @@
 import Domain
 import SwiftUI
 
+// MARK: - ListeningModePage.LanguagePicker
+
 extension ListeningModePage {
-  struct SelectedLanguage {
-    let title: String
-    let noSelectDescription: String
-    let selectedLanguage: Binding<LanguageEntity.Item?>
-    let itemList: [LanguageEntity.Item]
-    let disabled: Bool
+  struct LanguagePicker {
+
+    // MARK: Lifecycle
 
     init(
       title: String = "",
       noSelectDescription: String = "언어를 선택해주세요",
       selectedLanguage: Binding<LanguageEntity.Item?>,
       itemList: [LanguageEntity.Item],
-      disabled: Bool)
-    {
+      disabled: Bool
+    ) {
       self.title = title
       self.noSelectDescription = noSelectDescription
       self.selectedLanguage = selectedLanguage
       self.itemList = itemList
       self.disabled = disabled
     }
+
+    // MARK: Internal
+
+    let title: String
+    let noSelectDescription: String
+    let selectedLanguage: Binding<LanguageEntity.Item?>
+    let itemList: [LanguageEntity.Item]
+    let disabled: Bool
+
   }
 }
 
-extension ListeningModePage.SelectedLanguage {
+extension ListeningModePage.LanguagePicker {
   private func stateImage(item: LanguageEntity.Item) -> String {
     switch item.status {
     case .notInstalled: "arrow.down.circle"
@@ -35,7 +43,7 @@ extension ListeningModePage.SelectedLanguage {
   }
 }
 
-extension ListeningModePage.SelectedLanguage: View {
+extension ListeningModePage.LanguagePicker: View {
 
   var body: some View {
     Picker(.init(title), selection: selectedLanguage) {

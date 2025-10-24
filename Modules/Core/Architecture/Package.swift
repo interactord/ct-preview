@@ -12,17 +12,21 @@ let package: Package = .init(
   products: [
     .library(
       name: "Architecture",
-      targets: ["Architecture"]),
+      targets: ["Architecture"]
+    )
   ],
   dependencies: [
     .package(
       url: "https://github.com/pointfreeco/swift-composable-architecture.git",
-      from: "1.20.0"),
+      from: "1.20.0"
+    )
   ],
   targets: [
     .target(
       name: "Architecture",
       dependencies: [
-        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-      ]),
-  ])
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+      ]
+    )
+  ]
+)

@@ -10,8 +10,8 @@ public struct DesignSystemText: View {
   public init(
     text: String?,
     backgroundColor: Color? = .none,
-    textModel: DesignSystemTextModel = .defaultModel)
-  {
+    textModel: DesignSystemTextModel = .defaultModel
+  ) {
     self.text = text
     self.backgroundColor = backgroundColor
     self.textModel = textModel
@@ -63,7 +63,8 @@ extension DesignSystemText {
       color: textModel.color,
       fontSize: fontSize,
       weight: textModel.weight,
-      underline: textModel.underline)
+      underline: textModel.underline
+    )
 
     return mutate(textModel: textModel)
   }
@@ -73,7 +74,8 @@ extension DesignSystemText {
       color: textModel.color,
       fontSize: textModel.fontSize,
       weight: fontWeight,
-      underline: textModel.underline)
+      underline: textModel.underline
+    )
 
     return mutate(textModel: textModel)
   }
@@ -83,7 +85,8 @@ extension DesignSystemText {
       color: fontColor,
       fontSize: textModel.fontSize,
       weight: textModel.weight,
-      underline: textModel.underline)
+      underline: textModel.underline
+    )
 
     return mutate(textModel: textModel)
   }
@@ -93,7 +96,8 @@ extension DesignSystemText {
       color: textModel.color,
       fontSize: textModel.fontSize,
       weight: textModel.weight,
-      underline: underline)
+      underline: underline
+    )
 
     return mutate(textModel: textModel)
   }
@@ -102,22 +106,23 @@ extension DesignSystemText {
 // MARK: - DesignSystemTextModel
 
 public struct DesignSystemTextModel {
-  let color: Color
-  let fontSize: FontSize
-  let weight: FontWeight
-  let underline: UnderLineStyle
-
   public init(
     color: Color,
     fontSize: FontSize,
     weight: FontWeight,
-    underline: UnderLineStyle = .none)
-  {
+    underline: UnderLineStyle = .none
+  ) {
     self.color = color
     self.fontSize = fontSize
     self.weight = weight
     self.underline = underline
   }
+
+  let color: Color
+  let fontSize: FontSize
+  let weight: FontWeight
+  let underline: UnderLineStyle
+
 }
 
 extension DesignSystemTextModel {
@@ -126,7 +131,8 @@ extension DesignSystemTextModel {
       color: SystemColor.Label.OnBG.primary.color,
       fontSize: .font16,
       weight: .regular,
-      underline: .none)
+      underline: .none
+    )
   }
 }
 
@@ -159,28 +165,16 @@ struct ReplacingText: ViewModifier {
 
   // MARK: Lifecycle
 
-  public init(
+  init(
     text: String?,
     replaceFor: String,
     textModel: DesignSystemTextModel,
-    content: @escaping () -> Text)
-  {
+    content: @escaping () -> Text
+  ) {
     self.text = text
     self.replaceFor = replaceFor
     self.textModel = textModel
     self.content = content
-  }
-
-  // MARK: Public
-
-  public func build(text: String?) -> some View {
-    if let text, text.contains(replaceFor) {
-      return text.split(separatedBy: replaceFor).reduce(Text("")) {
-        replaceFor != $1 ? $0 + buildOrigin(text: $1) : $0 + content()
-      }
-    } else {
-      return buildOrigin(text: text)
-    }
   }
 
   // MARK: Internal
@@ -189,6 +183,16 @@ struct ReplacingText: ViewModifier {
   let replaceFor: String
   let textModel: DesignSystemTextModel
   let content: () -> Text
+
+  func build(text: String?) -> some View {
+    if let text, text.contains(replaceFor) {
+      return text.split(separatedBy: replaceFor).reduce(Text("")) {
+        replaceFor != $1 ? $0 + buildOrigin(text: $1) : $0 + content()
+      }
+    } else {
+      return buildOrigin(text: text)
+    }
+  }
 
   func buildOrigin(text: String?) -> Text {
     Text(text ?? "")
@@ -206,9 +210,8 @@ struct ReplacingText: ViewModifier {
 extension DesignSystemText {
   public func replacingString(
     replaceFor: String,
-    content: @escaping () -> Text)
-    -> some View
-  {
+    content: @escaping () -> Text
+  ) -> some View {
     modifier(ReplacingText(text: text, replaceFor: replaceFor, textModel: textModel, content: content))
   }
 }

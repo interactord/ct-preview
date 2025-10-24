@@ -14,14 +14,15 @@ public protocol MatchPathUsable {
 
 public struct RouteBuilderOf<RootNavigatorType, Content: View> {
 
-  let matchPath: String
-  let routeBuild: (RootNavigatorType, String, DependencyType) -> Content?
-
   public init(
     matchPath: String,
-    routeBuild: @escaping (RootNavigatorType, String, DependencyType) -> Content?)
-  {
+    routeBuild: @escaping (RootNavigatorType, String, DependencyType) -> Content?
+  ) {
     self.matchPath = matchPath
     self.routeBuild = routeBuild
   }
+
+  let matchPath: String
+  let routeBuild: (RootNavigatorType, String, DependencyType) -> Content?
+
 }

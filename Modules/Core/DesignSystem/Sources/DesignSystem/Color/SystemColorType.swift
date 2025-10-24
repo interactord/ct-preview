@@ -12,9 +12,10 @@ public typealias UniversalColor = UIColor
 // MARK: - SystemColorType
 
 public protocol SystemColorType: Sendable {
+  var color: Color { get }
+
   func color(scheme: ColorScheme) -> Color
   func getPaletteColor(scheme: ColorScheme) -> UniversalColor
-  var color: Color { get }
 }
 
 extension SystemColorType {

@@ -25,32 +25,34 @@ let targetList: [Target] = [
     buildRules: [],
     mergedBinaryType: .automatic,
     mergeable: false,
-    onDemandResourcesTags: .none),
+    onDemandResourcesTags: .none
+  ),
 
-    .target(
-      name: "CT-MAC",
-      destinations: .macOS,
-      product: .app,
-      productName: "CT-Preview",
-      bundleId: "com.flitto.previewer",
-      deploymentTargets: .none,
-      infoPlist: .extendingDefault(with: .commonInfoValue()),
-      sources: ["Sources/**"],
-      resources: ["Resources/**"],
-      copyFiles: .none,
-      headers: .none,
-      entitlements: .file(path: .relativeToRoot("Entitlements/CT-MAC.entitlements")),
-      scripts: [],
-      dependencies: compositeDependency,
-      settings: .defaultConfigSettings(isDev: true),
-      coreDataModels: [],
-      environmentVariables: [:],
-      launchArguments: [],
-      additionalFiles: [],
-      buildRules: [],
-      mergedBinaryType: .automatic,
-      mergeable: false,
-      onDemandResourcesTags: .none),
+  .target(
+    name: "CT-MAC",
+    destinations: .macOS,
+    product: .app,
+    productName: "CT-Preview",
+    bundleId: "com.flitto.previewer",
+    deploymentTargets: .none,
+    infoPlist: .extendingDefault(with: .commonInfoValue()),
+    sources: ["Sources/**"],
+    resources: ["Resources/**"],
+    copyFiles: .none,
+    headers: .none,
+    entitlements: .file(path: .relativeToRoot("Entitlements/CT-MAC.entitlements")),
+    scripts: [],
+    dependencies: compositeDependency,
+    settings: .defaultConfigSettings(isDev: true),
+    coreDataModels: [],
+    environmentVariables: [:],
+    launchArguments: [],
+    additionalFiles: [],
+    buildRules: [],
+    mergedBinaryType: .automatic,
+    mergeable: false,
+    onDemandResourcesTags: .none
+  ),
 ]
 
 let project = Project(
@@ -64,14 +66,16 @@ let project = Project(
     disableShowEnvironmentVarsInScriptPhases: false,
     disableSynthesizedResourceAccessors: false,
     textSettings: .textSettings(),
-    xcodeProjectName: .none),
+    xcodeProjectName: .none
+  ),
   packages: compositePackageList,
   settings: .none,
   targets: targetList,
   schemes: [],
   fileHeaderTemplate: .none,
   additionalFiles: [],
-  resourceSynthesizers: .default)
+  resourceSynthesizers: .default
+)
 
 private var compositeDependency: [TargetDependency] {
   [
@@ -92,7 +96,7 @@ private var compositePackageList: [Package] {
     .local(path: .relativeToRoot("Modules/Core/Domain")),
     .local(path: .relativeToRoot("Modules/Core/Functor")),
     .local(path: .relativeToRoot("Modules/Core/Platform")),
-     .local(path: .relativeToRoot("Modules/Core/LinkNavigatorSwiftUI")),
-     .local(path: .relativeToRoot("Modules/Feature/Dashboard")),
+    .local(path: .relativeToRoot("Modules/Core/LinkNavigatorSwiftUI")),
+    .local(path: .relativeToRoot("Modules/Feature/Dashboard")),
   ]
 }

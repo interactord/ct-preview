@@ -12,7 +12,8 @@ let package: Package = .init(
   products: [
     .library(
       name: "Domain",
-      targets: ["Domain"]),
+      targets: ["Domain"]
+    )
   ],
   dependencies: [
   ],
@@ -20,5 +21,7 @@ let package: Package = .init(
     .target(
       name: "Domain",
       dependencies: [
-      ]),
-  ])
+      ]
+    )
+  ]
+)

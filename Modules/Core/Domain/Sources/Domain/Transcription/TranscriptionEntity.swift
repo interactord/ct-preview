@@ -1,3 +1,3 @@
 import Foundation
 
-public enum TranscriptionEntity {}
+public enum TranscriptionEntity { }

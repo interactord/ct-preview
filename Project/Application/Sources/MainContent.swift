@@ -1,11 +1,15 @@
 import Architecture
-import LinkNavigatorSwiftUI
 import DesignSystem
+import LinkNavigatorSwiftUI
 import SwiftUI
+
+// MARK: - MainContent
 
 struct MainContent {
   @Binding var navigator: SingleNavigator
 }
+
+// MARK: View
 
 extension MainContent: View {
 
@@ -14,9 +18,11 @@ extension MainContent: View {
       navigator: navigator,
       rootLink: .init(
         path: Link.Dashboard.Path.splash.rawValue,
-        items: .none)) {
-        SystemColor.Background.Grouped.base.color
-          .navigationToolBar()
-      }
+        items: .none
+      )
+    ) {
+      SystemColor.Background.Grouped.base.color
+        .navigationToolBar()
+    }
   }
 }

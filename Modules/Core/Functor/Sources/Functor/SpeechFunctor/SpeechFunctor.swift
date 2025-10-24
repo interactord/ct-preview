@@ -1,24 +1,19 @@
 import Foundation
 import Speech
 
+// MARK: - SpeechFunctor
+
 @available(iOS 26.0, *)
 public struct SpeechFunctor: Sendable {
 
-  let locale: Locale
-  private let module: SpeechTranscriber
-
-  private var isRunningOnSimulator: Bool {
-#if targetEnvironment(simulator)
-    return true
-#else
-    return false
-#endif
-  }
+  // MARK: Lifecycle
 
   public init(locale: Locale) {
     self.locale = locale
-    self.module = SpeechTranscriber.init(locale: locale, preset: SpeechTranscriber.Preset.default)
+    module = SpeechTranscriber(locale: locale, preset: SpeechTranscriber.Preset.default)
   }
+
+  // MARK: Public
 
   public func getModelStatus() async -> SpeechStatus {
     guard !isRunningOnSimulator else { return .notSupported }
@@ -30,7 +25,7 @@ public struct SpeechFunctor: Sendable {
       Task {
         do {
           guard let downloader = try await AssetInventory.assetInstallationRequest(supporting: [module]) else {
-            print("[ERRROR] module install Null")
+//            print("[ERRROR] module install Null")
             continuation.finish()
             return
           }
@@ -70,21 +65,41 @@ public struct SpeechFunctor: Sendable {
     return installed.map { $0.identifier(.bcp47) }.contains(locale.identifier(.bcp47))
   }
 
+  // MARK: Internal
+
+  let locale: Locale
+
+  // MARK: Private
+
+  private let module: SpeechTranscriber
+
+  private var isRunningOnSimulator: Bool {
+    #if targetEnvironment(simulator)
+    return true
+    #else
+    return false
+    #endif
+  }
+
 }
 
 @available(iOS 26.0, *)
 extension SpeechFunctor {
+
+  // MARK: Public
+
   public enum SpeechStatus {
     case installed
     case notInstalled
     case notSupported
   }
 
+  // MARK: Private
+
   private func supported(locale: Locale) async -> Bool {
     let supported = await SpeechTranscriber.supportedLocales
     return supported.map { $0.identifier(.bcp47) }.contains(locale.identifier(.bcp47))
   }
-
 
 }
 
@@ -100,7 +115,8 @@ extension SpeechTranscriber.Preset {
         .volatileResults,
       ],
       attributeOptions: [
-        .audioTimeRange,
-      ])
+        .audioTimeRange
+      ]
+    )
   }
 }

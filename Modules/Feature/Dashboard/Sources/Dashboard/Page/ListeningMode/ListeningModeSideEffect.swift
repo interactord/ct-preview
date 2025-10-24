@@ -2,10 +2,10 @@ import Architecture
 import ComposableArchitecture
 import Domain
 import Foundation
-import LinkNavigatorSwiftUI
 import Functor
+import LinkNavigatorSwiftUI
 
-// MARK: - SplashSideEffect
+// MARK: - ListeningModeSideEffect
 
 struct ListeningModeSideEffect: Sendable {
   let navigator: SingleNavigator
@@ -26,11 +26,11 @@ extension ListeningModeSideEffect {
       let newItem: [LanguageEntity.Item] = await LanguageEntity.LangCode.allCases.asyncMap { langCode in
         switch await SpeechFunctor(locale: langCode.locale).getModelStatus() {
         case .notSupported:
-          return .init(langCode: langCode, status: .notSupported)
+          .init(langCode: langCode, status: .notSupported)
         case .installed:
-          return .init(langCode: langCode, status: .installed)
+          .init(langCode: langCode, status: .installed)
         case .notInstalled:
-          return .init(langCode: langCode, status: .notInstalled)
+          .init(langCode: langCode, status: .notInstalled)
         }
       }
       let filterItem = newItem.filter { $0.status != .notSupported }
@@ -41,12 +41,16 @@ extension ListeningModeSideEffect {
   func downloadSpeechModel(item: LanguageEntity.Item) -> Effect<ListeningModeReducer.Action> {
     .run { send in
       let functor = SpeechFunctor(locale: item.langCode.locale)
-      guard await !functor.installed(locale: item.langCode.locale) else { return await send(.none) }
+      guard await !functor.installed(locale: item.langCode.locale) else { return
+        await send(.set(\.downloadProgress, .none))
+        await send(.none)
+      }
 
       await functor.releaseLocales()
-      for try await progress in functor.downloadIfNeeded() {
-        print("[DOWNLOAD] \(progress)")
+      for try await progress in functor.downloadIfNeeded().distinctUntilChanged() {
+        await send(.set(\.downloadProgress, progress))
       }
+      await send(.set(\.downloadProgress, .none))
       await send(.getLanguageItems)
     }
   }
@@ -76,11 +80,9 @@ extension ListeningModeSideEffect {
         await send(.set(\.isPlay, false))
         await send(.throwError(error.serialized()))
       }
-
     }
   }
 }
-
 
 extension Sequence {
   fileprivate func asyncMap<T>(_ transform: (Element) async throws -> T) async rethrows -> [T] {
@@ -90,5 +92,73 @@ extension Sequence {
       results.append(value)
     }
     return results
+  }
+}
+
+extension AsyncSequence {
+  fileprivate func distinctUntilChanged(
+    by areEquivalent: @escaping (Element, Element) -> Bool
+  ) -> AsyncDistinctUntilChangedSequence<Self> {
+    AsyncDistinctUntilChangedSequence(base: self, areEquivalent: areEquivalent)
+  }
+}
+
+extension AsyncSequence where Element: Equatable {
+  fileprivate func distinctUntilChanged() -> AsyncDistinctUntilChangedSequence<Self> {
+    AsyncDistinctUntilChangedSequence(base: self, areEquivalent: ==)
+  }
+}
+
+private struct AsyncDistinctUntilChangedSequence<Base: AsyncSequence>: AsyncSequence {
+
+  // MARK: Lifecycle
+
+  fileprivate init(base: Base, areEquivalent: @escaping (Element, Element) -> Bool) {
+    self.base = base
+    self.areEquivalent = areEquivalent
+  }
+
+  // MARK: Internal
+
+  let base: Base
+  let areEquivalent: (Element, Element) -> Bool
+
+  // MARK: Fileprivate
+
+  fileprivate typealias Element = Base.Element
+
+  fileprivate struct Iterator: AsyncIteratorProtocol {
+
+    // MARK: Internal
+
+    var baseIterator: Base.AsyncIterator
+    let areEquivalent: (Element, Element) -> Bool
+    var previousEmitted: Element?
+
+    // MARK: Fileprivate
+
+    fileprivate mutating func next() async rethrows -> Element? {
+      // 루프를 돌며 직전 값과 다른 첫 요소를 찾아서 emit
+      while let nextValue = try await baseIterator.next() {
+        if let prev = previousEmitted {
+          if !areEquivalent(prev, nextValue) {
+            previousEmitted = nextValue
+            return nextValue
+          } else {
+            // 동일하면 스킵하고 다음 요소 탐색
+            continue
+          }
+        } else {
+          // 첫 값은 무조건 emit
+          previousEmitted = nextValue
+          return nextValue
+        }
+      }
+      return nil
+    }
+  }
+
+  fileprivate func makeAsyncIterator() -> Iterator {
+    Iterator(baseIterator: base.makeAsyncIterator(), areEquivalent: areEquivalent, previousEmitted: nil)
   }
 }

@@ -1,12 +1,15 @@
-import Foundation
 import Domain
-import SwiftUI
+import Foundation
 import Functor
+import SwiftUI
+
+// MARK: - ListeningModePage.ContentItem
 
 extension ListeningModePage {
   struct ContentItem {
     let focusItemList: [TranscriptionEntity.Item]
-    var updateAction: (TranscriptionEntity.Item) -> Void
+    let updateAction: (TranscriptionEntity.Item) -> Void
+    let errorAction: (CompositeError) -> Void
   }
 }
 
@@ -17,11 +20,10 @@ extension ListeningModePage.ContentItem {
 
   private var originFont: Font {
     item?.translation == nil
-    ? Font.system(size: 16, weight: .bold, design: .default)
-    : Font.system(size: 12, weight: .regular, design: .default)
+      ? Font.system(size: 16, weight: .bold, design: .default)
+      : Font.system(size: 12, weight: .regular, design: .default)
   }
 }
-
 
 extension ListeningModePage.ContentItem: View {
   var body: some View {
@@ -54,11 +56,6 @@ extension ListeningModePage.ContentItem: View {
       guard item?.translation == .none else { return }
       await translation()
       await llmTranslation()
-//      await translation()
-////      Task {
-////
-////        if await llmFunctor.checkAppleIntelligenceAvailability() { await  llmTranslation() }
-////      }
     }
   }
 
@@ -69,34 +66,30 @@ extension ListeningModePage.ContentItem: View {
     let functor = TranslationFunctor(startLocale: item.startLocale, endLocale: endLocale)
     do {
       let result = try await functor.request(text: item.text.toString())
-      print(result)
       var newItem = item
       newItem.translation = .init(id: item.id, locale: endLocale, text: result)
       updateAction(newItem)
     } catch {
-      print("[Error] \(error)")
+      errorAction(error.serialized())
     }
   }
 
   @MainActor
   func llmTranslation() async {
     guard let item else { return }
-    let llmFunctor: LanguageModelFunctor = .init()
+    let llmFunctor = LanguageModelFunctor()
     guard await llmFunctor.checkAppleIntelligenceAvailability() else { return }
     let endLocale = item.endLocale ?? item.startLocale
 
-//    let functor = TranslationFunctor(startLocale: item.startLocale, endLocale: endLocale)
-
     do {
-//      let localTranslationResult = try await functor.request(text: item.text.toString())
-
       let history: [LanguageModelFunctor.SourceItem] = focusItemList.dropLast()
         .map { .init(locale: $0.startLocale, text: $0.text.toString()) }
 
-      let translationItem: LanguageModelFunctor.TranslationItem = .init(
+      let translationItem = LanguageModelFunctor.TranslationItem(
         startItem: .init(locale: item.startLocale, text: item.text.toString()),
         endItem: .init(locale: endLocale, text: item.translation?.text ?? ""),
-        historyItemList: history)
+        historyItemList: history
+      )
       let result = try await llmFunctor.correctAndTranslate(item: translationItem)
 
       var newItem = item
@@ -104,13 +97,13 @@ extension ListeningModePage.ContentItem: View {
       newItem.translation = .init(id: item.id, locale: endLocale, text: result.translatedText)
       updateAction(newItem)
     } catch {
-      print("[ListeningModePage.ContentItem][ERROR] \(error)")
+      errorAction(error.serialized())
     }
   }
 }
 
 extension AttributedString {
   fileprivate func toString() -> String {
-    String(self.characters[...])
+    String(characters[...])
   }
 }

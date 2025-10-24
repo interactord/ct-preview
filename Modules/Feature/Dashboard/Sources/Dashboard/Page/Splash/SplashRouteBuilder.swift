@@ -18,8 +18,11 @@ struct SplashRouteBuilder {
           reducer: {
             SplashReducer(sideEffect: .init(
               navigator: navigator,
-              useCaseGroup: env))
-          })))
+              useCaseGroup: env
+            ))
+          }
+        )
+      ))
     }
   }
 }

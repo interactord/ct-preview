@@ -3,7 +3,7 @@ import ComposableArchitecture
 import Domain
 import Foundation
 
-// MARK: - SplashReducer
+// MARK: - ListeningModeReducer
 
 @Reducer
 public struct ListeningModeReducer {
@@ -23,7 +23,8 @@ public struct ListeningModeReducer {
 
       case .teardown:
         return .concatenate(
-          CancelID.allCases.map { .cancel(pageID: state.id, id: $0) })
+          CancelID.allCases.map { .cancel(pageID: state.id, id: $0) }
+        )
 
       case .getLanguageItems:
         state.fetchLanguageItemList.isLoading = true
@@ -52,7 +53,7 @@ public struct ListeningModeReducer {
         }
         return .merge([
           sideEffect.forceStopTranscription(),
-          .cancel(pageID: state.id, id: CancelID.transcriptionEvent)
+          .cancel(pageID: state.id, id: CancelID.transcriptionEvent),
         ])
 
       case .routeToBack:
@@ -79,7 +80,8 @@ public struct ListeningModeReducer {
             endLocale: endLanguageItem.langCode.locale,
             text: item.text,
             isFinal: true,
-            translation: .none)
+            translation: .none
+          )
           state.contentViewState.finalList.append(item)
           state.contentViewState.draftItem = nil
           return .none
@@ -89,7 +91,8 @@ public struct ListeningModeReducer {
             startLocale: item.startLocale,
             endLocale: endLanguageItem.langCode.locale,
             text: item.text,
-            isFinal: false)
+            isFinal: false
+          )
           return .none
         }
 
@@ -113,12 +116,11 @@ extension ListeningModeReducer {
   public struct State: Equatable, Identifiable {
     public let id = UUID()
 
-//    var start: LanguageEntity.Item? = .none
-//    var end: LanguageEntity.Item? = .none
     var start: LanguageEntity.Item? = .init(langCode: .english, status: .installed)
     var end: LanguageEntity.Item? = .init(langCode: .korean, status: .installed)
-    var fetchLanguageItemList: FetchState.Data<[LanguageEntity.Item]> = .init(isLoading: false, value: [])
-    var contentViewState: ListeningModePage.ContentList.ViewState = .init()
+    var fetchLanguageItemList = FetchState.Data<[LanguageEntity.Item]>(isLoading: false, value: [])
+    var contentViewState = ListeningModePage.ContentList.ViewState()
+    var downloadProgress: Double? = .none
     var isPlay = false
   }
 
@@ -143,12 +145,7 @@ extension ListeningModeReducer {
   }
 }
 
-extension ListeningModeReducer.State {
-}
-
 extension ListeningModeReducer {
-
-  // MARK: Private
 
   private enum CancelID: Equatable, CaseIterable {
     case teardown
@@ -159,12 +156,13 @@ extension ListeningModeReducer {
 
 extension TranscriptionEntity.Item {
   fileprivate func serialized() -> TranscriptionEntity.Item {
-    TranscriptionEntity.Item.init(
+    TranscriptionEntity.Item(
       uuid: UUID().uuidString,
       startLocale: startLocale,
       endLocale: endLocale,
       text: text,
       isFinal: true,
-      translation: .none)
+      translation: .none
+    )
   }
 }

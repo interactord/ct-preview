@@ -145,15 +145,16 @@ extension CompositeError: Equatable {
 
 extension CompositeError {
   public struct Folder: Equatable {
-    public var parentsID: String
-    public var folderName: String
-    public var driveID: String
-
     public init(parentsID: String, folderName: String, driveID: String) {
       self.parentsID = parentsID
       self.folderName = folderName
       self.driveID = driveID
     }
+
+    public var parentsID: String
+    public var folderName: String
+    public var driveID: String
+
   }
 }
 

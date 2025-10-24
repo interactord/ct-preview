@@ -30,8 +30,7 @@ extension SplashPage: View {
       Spacer()
     }
     .background(.background)
-    .onAppear {
-    }
+    .onAppear { }
     .onDisappear {
       store.send(.teardown)
     }

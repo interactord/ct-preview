@@ -7,11 +7,11 @@ struct CustomDialog<DialogContent: View>: ViewModifier {
 
   // MARK: Lifecycle
 
-  public init(
+  init(
     isPresented: Binding<Bool>,
     cornerRadius: CGFloat,
-    @ViewBuilder dialogContent: @escaping () -> DialogContent)
-  {
+    @ViewBuilder dialogContent: @escaping () -> DialogContent
+  ) {
     _isPresented = isPresented
     self.cornerRadius = cornerRadius
     self.dialogContent = dialogContent()
@@ -35,7 +35,8 @@ struct CustomDialog<DialogContent: View>: ViewModifier {
             .foregroundColor(SystemColor.Overlay.Basic.default.color)
             .transition(
               .opacity
-                .animation(.easeOut(duration: 0.15)))
+                .animation(.easeOut(duration: 0.15))
+            )
 
           Group {
             dialogContent
@@ -45,7 +46,8 @@ struct CustomDialog<DialogContent: View>: ViewModifier {
           }
           .transition(
             .opacity
-              .animation(.easeOut(duration: 0.15)))
+              .animation(.easeOut(duration: 0.15))
+          )
         }
       }
       .animation(.easeInOut, value: isPresented)
@@ -57,13 +59,14 @@ extension View {
   public func customDialog(
     isPresented: Binding<Bool>,
     cornerRadius: CGFloat,
-    @ViewBuilder dialogContent: @escaping () -> some View)
-    -> some View
-  {
+    @ViewBuilder dialogContent: @escaping () -> some View
+  ) -> some View {
     modifier(
       CustomDialog(
         isPresented: isPresented,
         cornerRadius: cornerRadius,
-        dialogContent: dialogContent))
+        dialogContent: dialogContent
+      )
+    )
   }
 }

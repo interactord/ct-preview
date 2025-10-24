@@ -12,7 +12,8 @@ let package: Package = .init(
   products: [
     .library(
       name: "Dashboard",
-      targets: ["Dashboard"]),
+      targets: ["Dashboard"]
+    )
   ],
   dependencies: [
     .package(path: "../../Core/Architecture"),
@@ -23,7 +24,8 @@ let package: Package = .init(
     .package(path: "../../Core/LinkNavigatorSwiftUI"),
     .package(
       url: "https://github.com/pointfreeco/swift-composable-architecture.git",
-      from: "1.20.0"),
+      from: "1.20.0"
+    ),
   ],
   targets: [
     .target(
@@ -36,5 +38,7 @@ let package: Package = .init(
         "Platform",
         "LinkNavigatorSwiftUI",
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-      ]),
-  ])
+      ]
+    )
+  ]
+)

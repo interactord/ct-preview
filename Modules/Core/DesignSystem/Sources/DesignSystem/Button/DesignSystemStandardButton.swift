@@ -9,15 +9,17 @@ struct DesignSystemPreview: View {
         action: {
 //          print("onTapped")
         },
-        text: "StandardButton")
-        .setSize(sizeType: .l)
+        text: "StandardButton"
+      )
+      .setSize(sizeType: .l)
 
       DesignSystemStandardButton(
         action: {
 //          print("onTapped")
         },
-        text: "StandardButton")
-        .setSize(sizeType: .s)
+        text: "StandardButton"
+      )
+      .setSize(sizeType: .s)
     }
   }
 }
@@ -34,7 +36,8 @@ extension DesignSystemStandardButton {
       sizeType: buttonStyle.sizeType,
       kindType: buttonStyle.kindType,
       multilineType: buttonStyle.multilineType,
-      isMaxWidth: buttonStyle.isMaxWidth)
+      isMaxWidth: buttonStyle.isMaxWidth
+    )
 
     return mutate(buttonStyle: style)
   }
@@ -46,7 +49,8 @@ extension DesignSystemStandardButton {
       sizeType: sizeType,
       kindType: buttonStyle.kindType,
       multilineType: buttonStyle.multilineType,
-      isMaxWidth: buttonStyle.isMaxWidth)
+      isMaxWidth: buttonStyle.isMaxWidth
+    )
 
     return mutate(buttonStyle: style)
   }
@@ -58,7 +62,8 @@ extension DesignSystemStandardButton {
       sizeType: buttonStyle.sizeType,
       kindType: buttonStyle.kindType,
       multilineType: buttonStyle.multilineType,
-      isMaxWidth: buttonStyle.isMaxWidth)
+      isMaxWidth: buttonStyle.isMaxWidth
+    )
 
     return mutate(buttonStyle: style)
   }
@@ -70,7 +75,8 @@ extension DesignSystemStandardButton {
       sizeType: buttonStyle.sizeType,
       kindType: buttonStyle.kindType,
       multilineType: buttonStyle.multilineType,
-      isMaxWidth: buttonStyle.isMaxWidth)
+      isMaxWidth: buttonStyle.isMaxWidth
+    )
 
     return mutate(buttonStyle: style)
   }
@@ -82,7 +88,8 @@ extension DesignSystemStandardButton {
       sizeType: buttonStyle.sizeType,
       kindType: kindType,
       multilineType: buttonStyle.multilineType,
-      isMaxWidth: buttonStyle.isMaxWidth)
+      isMaxWidth: buttonStyle.isMaxWidth
+    )
 
     return mutate(buttonStyle: style)
   }
@@ -94,7 +101,8 @@ extension DesignSystemStandardButton {
       sizeType: buttonStyle.sizeType,
       kindType: buttonStyle.kindType,
       multilineType: multilineType,
-      isMaxWidth: buttonStyle.isMaxWidth)
+      isMaxWidth: buttonStyle.isMaxWidth
+    )
 
     return mutate(buttonStyle: style)
   }
@@ -106,7 +114,8 @@ extension DesignSystemStandardButton {
       sizeType: buttonStyle.sizeType,
       kindType: buttonStyle.kindType,
       multilineType: buttonStyle.multilineType,
-      isMaxWidth: true)
+      isMaxWidth: true
+    )
 
     return mutate(buttonStyle: style)
   }
@@ -115,9 +124,8 @@ extension DesignSystemStandardButton {
 extension DesignSystemButtonStandardStyle {
   mutating func mutate<Value: Equatable>(
     keyPath: WritableKeyPath<DesignSystemButtonStandardStyle, Value>,
-    to value: Value)
-    -> Self
-  {
+    to value: Value
+  ) -> Self {
     self[keyPath: keyPath] = value
     return self
   }
@@ -130,12 +138,13 @@ struct DesignSystemStandardButton_Previews: PreviewProvider {
     DesignSystemStandardButton(
       action: { },
       text: "Standard Button",
-      isDisabled: false)
-      .setLayout(layoutType: .ghost)
-      .setSize(sizeType: .l)
-      .setKindType(kindType: .primary)
-      .setContentType(contentType: .iconWithText(Image(systemName: "folder"), isSpacer: false))
-      .setMaxWidth()
+      isDisabled: false
+    )
+    .setLayout(layoutType: .ghost)
+    .setSize(sizeType: .l)
+    .setKindType(kindType: .primary)
+    .setContentType(contentType: .iconWithText(Image(systemName: "folder"), isSpacer: false))
+    .setMaxWidth()
   }
 }
 
@@ -149,8 +158,8 @@ public struct DesignSystemStandardButton: View {
     action: @escaping () -> Void,
     text: String,
     isDisabled: Bool = false,
-    buttonStyle: DesignSystemButtonStandardStyle = .defaultStyle)
-  {
+    buttonStyle: DesignSystemButtonStandardStyle = .defaultStyle
+  ) {
     self.action = action
     self.text = text
     self.isDisabled = isDisabled
@@ -169,8 +178,9 @@ public struct DesignSystemStandardButton: View {
         layoutType: buttonStyle.layoutType,
         multilineType: buttonStyle.multilineType,
         isMaxWidth: buttonStyle.isMaxWidth,
-        isDisabled: isDisabled)
-        .contentShape(.rect)
+        isDisabled: isDisabled
+      )
+      .contentShape(.rect)
     }
     .disabled(isDisabled)
     .buttonStyle(.plain)
@@ -199,8 +209,8 @@ public struct DesignSystemStandardButton: View {
       layoutType: DesignSystemButtonStandardStyle.LayoutType,
       multilineType: DesignSystemButtonStandardStyle.MultilineType,
       isMaxWidth: Bool,
-      isDisabled: Bool)
-    {
+      isDisabled: Bool
+    ) {
       self.text = text
       self.contentType = contentType
       self.sizeType = sizeType
@@ -460,7 +470,8 @@ public struct DesignSystemStandardButton: View {
         commonContent
           .background(
             RoundedRectangle(cornerRadius: 6)
-              .stroke(borderColor, lineWidth: 1))
+              .stroke(borderColor, lineWidth: 1)
+          )
           .opacity(!isDisabled ? 1 : 0.4)
           .padding(.horizontal, 1)
 
@@ -485,8 +496,8 @@ public struct DesignSystemButtonStandardStyle {
     sizeType: SizeType,
     kindType: KindType,
     multilineType: MultilineType,
-    isMaxWidth: Bool)
-  {
+    isMaxWidth: Bool
+  ) {
     self.contentType = contentType
     self.layoutType = layoutType
     self.sizeType = sizeType
@@ -547,7 +558,8 @@ extension DesignSystemButtonStandardStyle {
       sizeType: .m,
       kindType: .primary,
       multilineType: .enable(.center),
-      isMaxWidth: false)
+      isMaxWidth: false
+    )
   }
 }
 

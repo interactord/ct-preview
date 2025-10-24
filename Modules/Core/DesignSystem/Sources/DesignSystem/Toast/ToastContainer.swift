@@ -18,9 +18,10 @@ extension ToastContainer: View {
   public var body: some View {
     Toast(
       toastItem: viewModel.toastMessage,
-      type: .default)
-      .onTapGesture {
-        viewModel.cancel()
-      }
+      type: .default
+    )
+    .onTapGesture {
+      viewModel.cancel()
+    }
   }
 }

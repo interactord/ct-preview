@@ -12,8 +12,8 @@ public final class SingleNavigator: Sendable {
   public init(
     routeList: [LinkItem] = [],
     dependency: DependencyType,
-    routeBuilderList: [RouteBuilderOf<SingleNavigator, AnyView>])
-  {
+    routeBuilderList: [RouteBuilderOf<SingleNavigator, AnyView>]
+  ) {
     self.routeList = routeList
     self.dependency = dependency
     self.routeBuilderList = routeBuilderList

@@ -3,13 +3,15 @@ import SwiftUI
 // MARK: - SearchBar
 
 public struct SearchBar {
-  private let viewState: ViewState
-  @Binding var text: String
-
   public init(viewState: ViewState, text: Binding<String>) {
     self.viewState = viewState
     _text = text
   }
+
+  @Binding var text: String
+
+  private let viewState: ViewState
+
 }
 
 // MARK: View
@@ -37,12 +39,13 @@ extension SearchBar: View {
 
 extension SearchBar {
   public struct ViewState: Equatable {
-    let ltSpkrSelLangSearchHint: String?
-    let ltSpkrChatEditCancelBtn: String?
-
     public init(ltSpkrSelLangSearchHint: String?, ltSpkrChatEditCancelBtn: String?) {
       self.ltSpkrSelLangSearchHint = ltSpkrSelLangSearchHint
       self.ltSpkrChatEditCancelBtn = ltSpkrChatEditCancelBtn
     }
+
+    let ltSpkrSelLangSearchHint: String?
+    let ltSpkrChatEditCancelBtn: String?
+
   }
 }

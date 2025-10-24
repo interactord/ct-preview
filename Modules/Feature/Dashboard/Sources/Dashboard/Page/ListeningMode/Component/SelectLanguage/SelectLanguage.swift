@@ -1,37 +1,43 @@
+import Domain
 import Foundation
 import SwiftUI
-import Domain
 import Translation
 
+// MARK: - SelectLanguage
+
 struct SelectLanguage {
-  
+
   let languageList: [LanguageEntity.Item]
   let disabled: Bool
   let onChangeStart: (LanguageEntity.Item?) -> Void
   let onChangeEnd: (LanguageEntity.Item?) -> Void
-
+  let onError: (CompositeError) -> Void
 
   @State private var start: LanguageEntity.Item? = .init(langCode: .english, status: .installed)
   @State private var end: LanguageEntity.Item? = .init(langCode: .korean, status: .installed)
   @State private var configuration: TranslationSession.Configuration?
 }
 
+// MARK: View
+
 extension SelectLanguage: View {
-  
+
   var body: some View {
     HStack {
       Spacer()
-      ListeningModePage.SelectedLanguage(
+      ListeningModePage.LanguagePicker(
         selectedLanguage: $start,
         itemList: languageList,
-        disabled: disabled)
+        disabled: disabled
+      )
 
       Image(systemName: "arrow.right")
-      
-      ListeningModePage.SelectedLanguage(
+
+      ListeningModePage.LanguagePicker(
         selectedLanguage: $end,
         itemList: languageList,
-        disabled: disabled)
+        disabled: disabled
+      )
 
       Spacer()
     }
@@ -41,22 +47,22 @@ extension SelectLanguage: View {
           try await session.prepareTranslation()
           onChangeEnd(end)
         } catch {
-          print("[Translation] Failed to prepare: \(error)")
+          onError(error.serialized())
         }
       }
     }
-    .onChange(of: start, { _, new in
+    .onChange(of: start) { _, _ in
       guard !disabled else { return }
       onChangeStart(start)
       makeConfiguration()
-    })
-    .onChange(of: end, { _, _ in
+    }
+    .onChange(of: end) { _, _ in
       guard !disabled else { return }
       onChangeEnd(end)
       makeConfiguration()
-    })
+    }
   }
-  
+
   @MainActor
   func makeConfiguration() {
     guard let start, let end else { return }
@@ -64,8 +70,8 @@ extension SelectLanguage: View {
       try? await Task.sleep(for: .seconds(1))
       configuration = .init(
         source: start.langCode.locale.language,
-        target: end.langCode.locale.language)
+        target: end.langCode.locale.language
+      )
     }
   }
 }
-

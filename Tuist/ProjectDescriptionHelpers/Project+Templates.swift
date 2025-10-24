@@ -21,7 +21,7 @@ extension [String: Plist.Value] {
       "LSHasLocalizedDisplayName": .boolean(true),
       "UIApplicationSupportsMultipleScenes": .boolean(false),
       "UISupportedInterfaceOrientations": .array([
-        "UIInterfaceOrientationPortrait",
+        "UIInterfaceOrientationPortrait"
       ]),
       "UISupportedInterfaceOrientations~ipad": .array([
         "UIInterfaceOrientationPortrait",
@@ -32,7 +32,7 @@ extension [String: Plist.Value] {
       "UIRequiresFullScreen": .boolean(true),
       "LSRequiresIPhoneOS": .boolean(true),
       "UIApplicationSceneManifest": .dictionary([
-        "UIApplicationSupportsMultipleScenes": .boolean(false),
+        "UIApplicationSupportsMultipleScenes": .boolean(false)
       ]),
       "LSMinimumSystemVersion": "14.0",
       "UIApplicationSupportsIndirectInputEvents": .boolean(true),
@@ -42,23 +42,23 @@ extension [String: Plist.Value] {
         "UISceneConfigurations": .dictionary([
           "UIWindowSceneSessionRoleApplication": .array([.dictionary([
             "UISceneDelegateClassName": "$(PRODUCT_MODULE_NAME).SceneDelegate",
-            "UISceneConfigurationName": "Default Configuration"
-          ])]),
+            "UISceneConfigurationName": "Default Configuration",
+          ])])
         ]),
       ]),
       "ITSAppUsesNonExemptEncryption": .boolean(false),
       "NSAppTransportSecurity": .dictionary([
-        "NSAllowsArbitraryLoads": .boolean(true),
+        "NSAllowsArbitraryLoads": .boolean(true)
       ]),
       "FirebaseAppDelegateProxyEnabled": .boolean(false),
       "NSCameraUsageDescription": "Camera access is needed to capture QR Code.",
-      "NSMicrophoneUsageDescription": "Microhpone access is needed to capture Voice"
+      "NSMicrophoneUsageDescription": "Microhpone access is needed to capture Voice",
     ]
   }
 
   static func customPropertyInfoValue() -> [String: Plist.Value] {
     [
-      "Mode": .string("$(Mode)"),
+      "Mode": .string("$(Mode)")
     ]
   }
 }
@@ -71,7 +71,8 @@ extension Settings {
     .settings(
       base: defaultSettingDictionary(isDev: isDev),
       configurations: [],
-      defaultSettings: .recommended)
+      defaultSettings: .recommended
+    )
   }
 
   // MARK: Private

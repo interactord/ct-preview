@@ -19,7 +19,8 @@ public struct SplashReducer {
 
       case .teardown:
         return .concatenate(
-          CancelID.allCases.map { .cancel(pageID: state.id, id: $0) })
+          CancelID.allCases.map { .cancel(pageID: state.id, id: $0) }
+        )
 
       case .routeToListeningMode:
         return sideEffect.routeToListeningModePage()
@@ -60,8 +61,7 @@ extension SplashReducer {
 
   // MARK: Public
 
-  public enum Route: Equatable, Sendable {
-  }
+  public enum Route: Equatable, Sendable { }
 
   // MARK: Private
 

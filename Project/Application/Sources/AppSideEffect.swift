@@ -1,8 +1,10 @@
-import Foundation
 import Dashboard
 import Domain
-import Platform
+import Foundation
 import LinkNavigatorSwiftUI
+import Platform
+
+// MARK: - AppSideEffect
 
 struct AppSideEffect: DashboardUseCaseGroup, Sendable, DependencyType {
   let loggingUseCase: LoggingUseCase
@@ -16,6 +18,8 @@ extension AppSideEffect {
     return AppSideEffect(
       loggingUseCase: loggingUseCase,
       transcriptionUseCase: TranscriptionUseCasePlatform(
-        loggingUseCase: loggingUseCase))
+        loggingUseCase: loggingUseCase
+      )
+    )
   }
 }

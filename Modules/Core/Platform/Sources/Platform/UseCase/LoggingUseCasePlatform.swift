@@ -5,11 +5,12 @@ import Logging
 // MARK: - LoggingUseCasePlatform
 
 public struct LoggingUseCasePlatform: Sendable {
-  let logger: Logger
-
   public init(logger: Logger? = .none) {
     self.logger = logger ?? .init(label: "LoggingUseCasePlatform")
   }
+
+  let logger: Logger
+
 }
 
 // MARK: LoggingUseCase

@@ -47,10 +47,6 @@ extension ToastContainerViewModel {
 // MARK: - ToastItem
 
 public struct ToastItem: Equatable, Sendable {
-  public let message: String
-  public let id: String
-  public let accessory: AccessoryType?
-
   public init(message: String, id: String = UUID().uuidString, accessory: AccessoryType? = .none) {
     self.message = message
     self.id = id
@@ -60,4 +56,9 @@ public struct ToastItem: Equatable, Sendable {
   public enum AccessoryType: Equatable, Sendable {
     case image(Image)
   }
+
+  public let message: String
+  public let id: String
+  public let accessory: AccessoryType?
+
 }

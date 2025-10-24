@@ -12,20 +12,24 @@ let package: Package = .init(
   products: [
     .library(
       name: "Platform",
-      targets: ["Platform"]),
+      targets: ["Platform"]
+    )
   ],
   dependencies: [
     .package(path: "../../Core/Domain"),
     .package(path: "../../Core/Functor"),
     .package(
       url: "https://github.com/interactord/URLEncodedForm",
-      .upToNextMajor(from: "1.0.9")),
+      .upToNextMajor(from: "1.0.9")
+    ),
     .package(
       url: "https://github.com/apple/swift-log.git",
-      .upToNextMajor(from: "1.6.3")),
+      .upToNextMajor(from: "1.6.3")
+    ),
     .package(
       url: "https://github.com/google/generative-ai-swift",
-      .upToNextMajor(from: "0.5.6")),
+      .upToNextMajor(from: "0.5.6")
+    ),
   ],
   targets: [
     .target(
@@ -36,5 +40,7 @@ let package: Package = .init(
         "URLEncodedForm",
         .product(name: "Logging", package: "swift-log"),
         .product(name: "GoogleGenerativeAI", package: "generative-ai-swift"),
-      ]),
-  ])
+      ]
+    )
+  ]
+)

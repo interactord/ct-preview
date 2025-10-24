@@ -12,13 +12,15 @@ let package: Package = .init(
   products: [
     .library(
       name: "LinkNavigatorSwiftUI",
-      targets: ["LinkNavigatorSwiftUI"]),
+      targets: ["LinkNavigatorSwiftUI"]
+    )
   ],
   dependencies: [
     .package(path: "../../Core/DesignSystem"),
     .package(
       url: "https://github.com/interactord/URLEncodedForm",
-      .upToNextMajor(from: "1.0.9")),
+      .upToNextMajor(from: "1.0.9")
+    ),
   ],
   targets: [
     .target(
@@ -26,5 +28,7 @@ let package: Package = .init(
       dependencies: [
         "URLEncodedForm",
         "DesignSystem",
-      ]),
-  ])
+      ]
+    )
+  ]
+)

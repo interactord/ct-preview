@@ -1,16 +1,20 @@
-import Foundation
 import Domain
+import Foundation
 
+// MARK: - TranscriptionUseCasePlatform
 
 @available(iOS 26.0, *)
 public struct TranscriptionUseCasePlatform: Sendable {
-  let loggingUseCase: LoggingUseCase
-  let actor: LiveRecorder = .init()
-
   public init(loggingUseCase: LoggingUseCase) {
     self.loggingUseCase = loggingUseCase
   }
+
+  let loggingUseCase: LoggingUseCase
+  let actor = LiveRecorder()
+
 }
+
+// MARK: TranscriptionUseCase
 
 @available(iOS 26.0, *)
 extension TranscriptionUseCasePlatform: TranscriptionUseCase {

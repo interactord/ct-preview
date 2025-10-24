@@ -3,24 +3,25 @@ import Foundation
 extension LanguageEntity {
 
   public struct Item: Equatable, Hashable, Sendable {
-    public let langCode: LangCode
-    public let status: ProgressStatus
-
     public init(langCode: LangCode, status: ProgressStatus) {
       self.langCode = langCode
       self.status = status
     }
+
+    public let langCode: LangCode
+    public let status: ProgressStatus
+
   }
 
   public enum LangCode: Equatable, Hashable, Sendable, CaseIterable {
-    case english       // en_US
-    case french        // fr_FR
-    case german        // de_DE
-    case japanese      // ja_JP
-    case korean        // ko_KR
-    case spanish       // es_ES
-    case italian       // it_IT
-    case portugueseBR  // pt_BR
+    case english // en_US
+    case french // fr_FR
+    case german // de_DE
+    case japanese // ja_JP
+    case korean // ko_KR
+    case spanish // es_ES
+    case italian // it_IT
+    case portugueseBR // pt_BR
     case chineseSimplified // zh_CN
   }
 

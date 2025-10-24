@@ -4,19 +4,21 @@ import SwiftUI
 // MARK: - DesignSystemRadioButton
 
 public struct DesignSystemRadioButton<T: Equatable> {
-  let title: String
+  public init(title: String, value: Binding<T?>, target: T) {
+    self.title = title
+    _value = value
+    self.target = target
+  }
+
   @Binding var value: T?
+
+  let title: String
   let target: T
 
   var isSelected: Bool {
     value == target
   }
 
-  public init(title: String, value: Binding<T?>, target: T) {
-    self.title = title
-    _value = value
-    self.target = target
-  }
 }
 
 // MARK: View

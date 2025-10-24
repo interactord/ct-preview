@@ -12,8 +12,8 @@ public struct DesignSystemTextField: View {
     placeholder: String?,
     bindingText: Binding<String>,
     isShowErrorMessage: Bool = true,
-    errorMessage: String)
-  {
+    errorMessage: String
+  ) {
     self.fieldStyle = fieldStyle
     self.placeholder = placeholder
     self.bindingText = bindingText
@@ -29,7 +29,8 @@ public struct DesignSystemTextField: View {
       fieldStyle: fieldStyle,
       placeholder: placeholder,
       isShowErrorMessage: isShowErrorMessage,
-      errorMessage: errorMessage)
+      errorMessage: errorMessage
+    )
   }
 
   // MARK: Internal
@@ -124,9 +125,10 @@ public struct DesignSystemTextField: View {
             Spacer()
             DesignSystemText(
               text: bindingText
-                .filter { !$0.isWhitespace && !$0.isNewline } + "/" + "\(fieldStyle.maxTextLength ?? 0)")
-              .setFontSize(fontSize: .font12)
-              .setFontColor(fontColor: SystemColor.Label.OnBG.Secondary.color)
+                .filter { !$0.isWhitespace && !$0.isNewline } + "/" + "\(fieldStyle.maxTextLength ?? 0)"
+            )
+            .setFontSize(fontSize: .font12)
+            .setFontColor(fontColor: SystemColor.Label.OnBG.Secondary.color)
           }
         }
         .fixedSize(horizontal: false, vertical: true)
@@ -276,14 +278,16 @@ extension DesignSystemTextField {
       placeholder: placeholder,
       bindingText: bindingText,
       isShowErrorMessage: isShowErrorMessage,
-      errorMessage: errorMessage)
+      errorMessage: errorMessage
+    )
   }
 
   public func setFieldType(fieldType: DesignSystemTextFieldStyle.FieldType) -> Self {
     let style = DesignSystemTextFieldStyle(
       fieldType: fieldType,
       size: fieldStyle.sizeType,
-      maxTextLength: fieldStyle.maxTextLength)
+      maxTextLength: fieldStyle.maxTextLength
+    )
 
     return mutate(fieldStyle: style)
   }
@@ -292,7 +296,8 @@ extension DesignSystemTextField {
     let style = DesignSystemTextFieldStyle(
       fieldType: fieldStyle.fieldType,
       size: fieldSize,
-      maxTextLength: fieldStyle.maxTextLength)
+      maxTextLength: fieldStyle.maxTextLength
+    )
 
     return mutate(fieldStyle: style)
   }
@@ -300,7 +305,8 @@ extension DesignSystemTextField {
   public func setMaxLength(maxLength: Int) -> some View {
     ModifiedContent(
       content: self,
-      modifier: MaxLengthModifier(text: bindingText, maxLength: maxLength))
+      modifier: MaxLengthModifier(text: bindingText, maxLength: maxLength)
+    )
   }
 }
 
@@ -323,14 +329,16 @@ extension DesignSystemTextFieldStyle {
     .init(
       fieldType: .textOnly,
       size: .m,
-      maxTextLength: .none)
+      maxTextLength: .none
+    )
   }
 
   public static var numericStyle: Self {
     .init(
       fieldType: .textOnly,
       size: .m,
-      maxTextLength: .none)
+      maxTextLength: .none
+    )
   }
 }
 
@@ -358,6 +366,7 @@ extension DesignSystemTextFieldStyle {
 
 private struct MaxLengthModifier: ViewModifier {
   @Binding var text: String
+
   let maxLength: Int
 
   func body(content: Content) -> some View {

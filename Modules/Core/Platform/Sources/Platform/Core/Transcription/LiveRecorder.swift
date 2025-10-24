@@ -1,13 +1,15 @@
-import Foundation
 @preconcurrency import AVFoundation
+import Domain
+import Foundation
 import Functor
 import Speech
-import Domain
+
+// MARK: - LiveRecorder
 
 @available(iOS 26.0, *)
 final actor LiveRecorder {
   private var transcriber: LiveTranscriber? = .none
-  private let audioEngine: AVAudioEngine = .init()
+  private let audioEngine = AVAudioEngine()
 }
 
 @available(iOS 26.0, *)
@@ -17,12 +19,12 @@ extension LiveRecorder {
     if transcriber != nil { release() }
 
     try setupSession()
-    self.transcriber = try await setupTranscriber(locale: locale)
+    transcriber = try await setupTranscriber(locale: locale)
     try await transcriber?.prepare()
   }
 
   func transcript() -> AsyncThrowingStream<TranscriptionEntity.Item, Error> {
-    return .init { continuation in
+    .init { continuation in
       guard let transcriber else {
         continuation.finish(throwing: CompositeError.invalidTypeCasting)
         return
@@ -70,7 +72,7 @@ extension LiveRecorder {
 @available(iOS 26.0, *)
 extension LiveRecorder {
   private func recodeStream() -> AsyncThrowingStream<AVAudioPCMBuffer, Error> {
-    return .init { continuation in
+    .init { continuation in
       do {
         try setupAudioEngine()
         let format = audioEngine.inputNode.outputFormat(forBus: .zero)

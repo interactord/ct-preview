@@ -9,9 +9,8 @@ extension View {
     case caseKeyPath: CaseKeyPath<Enum, Case>,
     contentType: UTType,
     defaultFilename: String? = nil,
-    onCompletion: @escaping (Case, Result<URL, Error>) -> Void)
-    -> some View where Case: FileDocument
-  {
+    onCompletion: @escaping (Case, Result<URL, Error>) -> Void
+  ) -> some View where Case: FileDocument {
     let caseBinding = `enum`.case(caseKeyPath)
 
     let isPresented = Binding<Bool>(
@@ -20,14 +19,15 @@ extension View {
         if !newValue {
           `enum`.wrappedValue = nil
         }
-      })
+      }
+    )
 
     return fileExporter(
       isPresented: isPresented,
       document: caseBinding.wrappedValue,
       contentType: contentType,
-      defaultFilename: defaultFilename)
-    { result in
+      defaultFilename: defaultFilename
+    ) { result in
       if let value = caseBinding.wrappedValue {
         onCompletion(value, result)
       }
@@ -40,9 +40,8 @@ extension View {
     case caseKeyPath: CaseKeyPath<Enum, Case>,
     contentType: UTType,
     filename: @escaping ((Case?) -> String?),
-    onCompletion: @escaping (Case, Result<URL, Error>) -> Void)
-    -> some View where Case: FileDocument
-  {
+    onCompletion: @escaping (Case, Result<URL, Error>) -> Void
+  ) -> some View where Case: FileDocument {
     let caseBinding = `enum`.case(caseKeyPath)
 
     let isPresented = Binding<Bool>(
@@ -51,14 +50,15 @@ extension View {
         if !newValue {
           `enum`.wrappedValue = nil
         }
-      })
+      }
+    )
 
     return fileExporter(
       isPresented: isPresented,
       document: caseBinding.wrappedValue,
       contentType: contentType,
-      defaultFilename: filename(caseBinding.wrappedValue))
-    { result in
+      defaultFilename: filename(caseBinding.wrappedValue)
+    ) { result in
       if let value = caseBinding.wrappedValue {
         onCompletion(value, result)
       }

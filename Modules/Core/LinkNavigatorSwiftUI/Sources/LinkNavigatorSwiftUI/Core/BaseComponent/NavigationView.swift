@@ -32,6 +32,7 @@ public struct SingleNavigation<Content: View>: View {
   var fontScale = 1.0
 
   @Bindable var navigator: SingleNavigator
+
   let rootLink: LinkItem
   let content: () -> Content
 }

@@ -8,8 +8,6 @@ public enum FetchState { }
 
 extension FetchState {
   public struct Empty: Equatable, Sendable {
-    public var isLoading = false
-
     public init(isLoading: Bool) {
       self.isLoading = isLoading
     }
@@ -18,13 +16,16 @@ extension FetchState {
       isLoading = false
     }
 
+    public static var `default`: Self {
+      .init(isLoading: false)
+    }
+
+    public var isLoading = false
+
     public func mutate(isLoading: Bool) -> Self {
       .init(isLoading: isLoading)
     }
 
-    public static var `default`: Self {
-      .init(isLoading: false)
-    }
   }
 }
 
@@ -32,13 +33,13 @@ extension FetchState {
 
 extension FetchState {
   public struct Data<V: Equatable & Sendable>: Equatable, Sendable {
-    public var isLoading = false
-    public var value: V
-
     public init(isLoading: Bool, value: V) {
       self.isLoading = isLoading
       self.value = value
     }
+
+    public var isLoading = false
+    public var value: V
 
     public func mutate(isLoading: Bool) -> Self {
       .init(isLoading: isLoading, value: value)

@@ -13,8 +13,8 @@ public struct DesignSystemDropdownButton: View {
     isError: Bool = false,
     action: @escaping () -> Void,
     isDisabled: Bool = false,
-    buttonStyle: DesignSystemDropdownStyle = .defaultStyle)
-  {
+    buttonStyle: DesignSystemDropdownStyle = .defaultStyle
+  ) {
     self.placeholder = placeholder
     self.title = title
     self.action = action
@@ -34,7 +34,8 @@ public struct DesignSystemDropdownButton: View {
           title: title,
           isError: isError,
           isDisabled: isDisabled,
-          buttonStyle: buttonStyle)
+          buttonStyle: buttonStyle
+        )
       }
       .disabled(isDisabled)
       .buttonStyle(.plain)
@@ -56,8 +57,8 @@ public struct DesignSystemDropdownButton: View {
       title: String?,
       isError: Bool,
       isDisabled: Bool,
-      buttonStyle: DesignSystemDropdownStyle)
-    {
+      buttonStyle: DesignSystemDropdownStyle
+    ) {
       self.placeholder = placeholder
       self.title = title
       self.isError = isError
@@ -184,7 +185,8 @@ public struct DesignSystemDropdownButton: View {
           .background(backgroundColor)
           .overlay(
             RoundedRectangle(cornerRadius: 4)
-              .stroke(borderColor, lineWidth: 1))
+              .stroke(borderColor, lineWidth: 1)
+          )
 
       case .ghost:
         commonContent
@@ -219,13 +221,15 @@ extension DesignSystemDropdownButton {
       isError: isError,
       action: action,
       isDisabled: isDisabled,
-      buttonStyle: buttonStyle)
+      buttonStyle: buttonStyle
+    )
   }
 
   public func setSize(sizeType: DesignSystemDropdownStyle.SizeType) -> Self {
     let style = DesignSystemDropdownStyle(
       fieldType: buttonStyle.fieldType,
-      sizeType: sizeType)
+      sizeType: sizeType
+    )
 
     return mutate(buttonStyle: style)
   }
@@ -233,7 +237,8 @@ extension DesignSystemDropdownButton {
   public func setFieldType(fieldType: DesignSystemDropdownStyle.FieldType) -> Self {
     let style = DesignSystemDropdownStyle(
       fieldType: fieldType,
-      sizeType: buttonStyle.sizeType)
+      sizeType: buttonStyle.sizeType
+    )
 
     return mutate(buttonStyle: style)
   }
@@ -269,6 +274,7 @@ extension DesignSystemDropdownStyle {
   public static var defaultStyle: Self {
     .init(
       fieldType: .fixed,
-      sizeType: .m)
+      sizeType: .m
+    )
   }
 }

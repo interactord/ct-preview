@@ -10,8 +10,8 @@ public struct Lottie: View {
   public init(
     lottieType: LottieType,
     loopType: LoopType,
-    completionAction: @escaping () -> Void = { })
-  {
+    completionAction: @escaping () -> Void = { }
+  ) {
     self.lottieType = lottieType
     self.loopType = loopType
     self.completionAction = completionAction

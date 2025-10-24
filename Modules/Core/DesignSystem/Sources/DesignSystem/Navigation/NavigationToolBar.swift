@@ -5,14 +5,15 @@ extension View {
   public func navigationToolBar(
     isHideTitle: Bool = false,
     leadingContent: @escaping () -> some View = { EmptyView() },
-    trailingContent: @escaping () -> some View = { EmptyView() })
-    -> some View
-  {
+    trailingContent: @escaping () -> some View = { EmptyView() }
+  ) -> some View {
     modifier(
       NavigationToolBarModifier(
         isHideTitle: isHideTitle,
         leadingContent: leadingContent,
-        trailingContent: trailingContent))
+        trailingContent: trailingContent
+      )
+    )
   }
 }
 
@@ -46,7 +47,6 @@ public struct NavigationToolBarModifier<Leading: View, Trailing: View>: ViewModi
         }
       }
       .toolbarBackground(SystemColor.Background.Grouped.elevated.color, for: .automatic)
-      
   }
 
   // MARK: Internal

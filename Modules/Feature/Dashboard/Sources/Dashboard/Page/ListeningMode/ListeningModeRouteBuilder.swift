@@ -18,8 +18,11 @@ struct ListeningModeRouteBuilder {
           reducer: {
             ListeningModeReducer(sideEffect: .init(
               navigator: navigator,
-              useCaseGroup: env))
-          })))
+              useCaseGroup: env
+            ))
+          }
+        )
+      ))
     }
   }
 }

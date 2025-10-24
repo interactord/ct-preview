@@ -1,11 +1,11 @@
 import Architecture
+import Dashboard
 import DesignSystem
 import Domain
 import Functor
-import SwiftUI
-import Platform
 import LinkNavigatorSwiftUI
-import Dashboard
+import Platform
+import SwiftUI
 
 // MARK: - MainApp
 
@@ -14,7 +14,8 @@ struct MainApp: App {
 
   @State var linkNavigator = SingleNavigator(
     dependency: AppSideEffect.generate(),
-    routeBuilderList: AppRouterBuilderGroup().applicationBuilderList)
+    routeBuilderList: AppRouterBuilderGroup().applicationBuilderList
+  )
 
   var body: some Scene {
     WindowGroup {

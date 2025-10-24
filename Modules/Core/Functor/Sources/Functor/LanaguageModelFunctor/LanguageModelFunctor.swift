@@ -1,6 +1,8 @@
 import Foundation
 import FoundationModels
 
+// MARK: - LanguageModelFunctor
+
 /// iOS 26 FoundationModels 기반 LLM 교정 및 번역 Functor
 ///
 /// **주요 기능:**
@@ -27,7 +29,7 @@ import FoundationModels
 @available(iOS 26.0, *)
 public actor LanguageModelFunctor: Sendable {
 
-  public init() {}
+  public init() { }
 }
 
 // MARK: - Input Models
@@ -36,26 +38,28 @@ public actor LanguageModelFunctor: Sendable {
 extension LanguageModelFunctor {
   /// 번역 요청 항목
   public struct TranslationItem: Equatable, Sendable {
-    public let startItem: SourceItem // 원문 (교정 대상)
-    public let endItem: SourceItem // 번역어 (목표 언어, text는 비어있음)
-    public let historyItemList: [SourceItem] // 최근 대화 히스토리 (최대 2개 권장)
-
     public init(startItem: SourceItem, endItem: SourceItem, historyItemList: [SourceItem]) {
       self.startItem = startItem
       self.endItem = endItem
       self.historyItemList = historyItemList
     }
+
+    public let startItem: SourceItem // 원문 (교정 대상)
+    public let endItem: SourceItem // 번역어 (목표 언어, text는 비어있음)
+    public let historyItemList: [SourceItem] // 최근 대화 히스토리 (최대 2개 권장)
+
   }
 
   /// 소스 항목 (언어 + 텍스트)
   public struct SourceItem: Equatable, Sendable {
-    public let locale: Locale
-    public let text: String
-
     public init(locale: Locale, text: String) {
       self.locale = locale
       self.text = text
     }
+
+    public let locale: Locale
+    public let text: String
+
   }
 
   public func checkAppleIntelligenceAvailability() async -> Bool {
@@ -65,12 +69,14 @@ extension LanguageModelFunctor {
     case .available:
 //      print("[LanguageModelFunctor] ✅ Apple Intelligence / Foundation Model is available on this device.")
       return true
+
     case .unavailable(let reason):
-      print("[LanguageModelFunctor] ❌ Foundation Model is unavailable.")
-      print("[LanguageModelFunctor] Reason: \(reason)")
+//      print("[LanguageModelFunctor] ❌ Foundation Model is unavailable.")
+//      print("[LanguageModelFunctor] Reason: \(reason)")
       return false
+
     @unknown default:
-      print("[LanguageModelFunctor] ⚠️ Unknown availability state.")
+//      print("[LanguageModelFunctor] ⚠️ Unknown availability state.")
       return false
     }
   }
@@ -101,10 +107,10 @@ extension LanguageModelFunctor {
     let userPrompt = buildUserPrompt(item: item)
 
     // 디버깅: 프롬프트 출력
-    print("[LanguageModelFunctor] 📝 System Instructions:")
-    print(systemInstructions)
-    print("\n[LanguageModelFunctor] 📝 User Prompt:")
-    print(userPrompt)
+//    print("[LanguageModelFunctor] 📝 System Instructions:")
+//    print(systemInstructions)
+//    print("\n[LanguageModelFunctor] 📝 User Prompt:")
+//    print(userPrompt)
 
     // LanguageModelSession으로 처리
     let session = LanguageModelSession(instructions: systemInstructions)
@@ -114,13 +120,13 @@ extension LanguageModelFunctor {
       let response = try await session.respond(to: userPrompt, generating: IntegratedResponse.self)
 
       // 디버깅: 응답 출력
-      print("\n[LanguageModelFunctor] 📥 Response:")
-      print("correctedText: \(response.content.correctedText)")
-      print("translatedText: \(response.content.translatedText)")
+//      print("\n[LanguageModelFunctor] 📥 Response:")
+//      print("correctedText: \(response.content.correctedText)")
+//      print("translatedText: \(response.content.translatedText)")
 
       return response.content
     } catch {
-      print("[LanguageModelFunctor] ❌ Error: \(error)")
+//      print("[LanguageModelFunctor] ❌ Error: \(error)")
       throw LanguageModelError.processingFailed(underlying: error)
     }
   }
@@ -170,9 +176,9 @@ extension LanguageModelFunctor {
     public var errorDescription: String? {
       switch self {
       case .unavailable:
-        return "Apple Intelligence is not available on this device."
+        "Apple Intelligence is not available on this device."
       case .processingFailed(let error):
-        return "Processing failed: \(error.localizedDescription)"
+        "Processing failed: \(error.localizedDescription)"
       }
     }
   }
@@ -184,7 +190,7 @@ extension LanguageModelFunctor {
 extension LanguageModelFunctor {
   /// 시스템 지시: AI 역할 정의 (세션 초기화용)
   private func buildSystemInstructions() -> String {
-    return """
+    """
     You are a professional language correction and translation assistant.
     Your role:
     1. Fix grammar errors in source text
@@ -208,38 +214,38 @@ extension LanguageModelFunctor {
 
     // 부정 규칙 생성: 타겟 언어가 아닌 것들만 명시
     var negativeRules: [String] = []
-    
+
     // 소스와 타겟이 다르면 소스 언어가 아니라고 명시
     if sourceLangName != targetLangName {
       negativeRules.append("NOT \(sourceLangName)")
     }
-    
+
     // 타겟이 영어가 아니고, 소스도 영어가 아닌 경우에만 "NOT English" 추가
-    if targetLangName != "English" && sourceLangName != "English" {
+    if targetLangName != "English", sourceLangName != "English" {
       negativeRules.append("NOT English")
     }
-    
+
     let negativeConstraint = negativeRules.isEmpty ? "" : " (\(negativeRules.joined(separator: ", ")))"
 
     return """
-    Input (\(sourceLangName)): "\(item.startItem.text)"\(historySection)
+      Input (\(sourceLangName)): "\(item.startItem.text)"\(historySection)
 
-    \(example)
+      \(example)
 
-    Instructions:
-    1. Correct grammar in \(sourceLangName) → output as "correctedText"
-    2. Translate "correctedText" to \(targetLangName) → output as "translatedText"\(formalityHint)
+      Instructions:
+      1. Correct grammar in \(sourceLangName) → output as "correctedText"
+      2. Translate "correctedText" to \(targetLangName) → output as "translatedText"\(formalityHint)
 
-    Rules:
-    ✓ correctedText = \(sourceLangName) only
-    ✓ translatedText = \(targetLangName) only\(negativeConstraint)
+      Rules:
+      ✓ correctedText = \(sourceLangName) only
+      ✓ translatedText = \(targetLangName) only\(negativeConstraint)
 
-    Return JSON:
-    {
-      "correctedText": "...",
-      "translatedText": "..."
-    }
-    """
+      Return JSON:
+      {
+        "correctedText": "...",
+        "translatedText": "..."
+      }
+      """
   }
 
   /// 언어 코드 → 영어 언어명 변환
@@ -305,19 +311,19 @@ extension LanguageModelFunctor {
     let tgtName = getLanguageName(for: target)
 
     return """
-    Example Format:
-    {
-      "correctedText": "[Corrected text in \(srcName)]",
-      "translatedText": "[Translation in \(tgtName)]"
-    }
+      Example Format:
+      {
+        "correctedText": "[Corrected text in \(srcName)]",
+        "translatedText": "[Translation in \(tgtName)]"
+      }
 
-    Example (English → Korean):
-    Input: "yeah i did that yesterday"
-    {
-      "correctedText": "Yes, I completed that yesterday.",
-      "translatedText": "네, 어제 그 작업을 완료했습니다."
-    }
-    """
+      Example (English → Korean):
+      Input: "yeah i did that yesterday"
+      {
+        "correctedText": "Yes, I completed that yesterday.",
+        "translatedText": "네, 어제 그 작업을 완료했습니다."
+      }
+      """
   }
 
   /// 히스토리 컨텍스트 (영어 설명 + 다국어 텍스트)
@@ -331,9 +337,9 @@ extension LanguageModelFunctor {
     return """
 
 
-    Previous conversation:
-    \(lines)
-    """
+      Previous conversation:
+      \(lines)
+      """
   }
 }
 

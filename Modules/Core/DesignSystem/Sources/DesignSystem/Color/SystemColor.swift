@@ -9,15 +9,12 @@ import AppKit
 struct SystemColorChip {
   let systemColor: SystemColorType
 
-  init(systemColor: SystemColorType) {
-    self.systemColor = systemColor
-  }
 }
 
 // MARK: View
 
 extension SystemColorChip {
-  public var color: Color {
+  var color: Color {
     #if os(macOS)
     return .init(nsColor: NSColor(name: .none, dynamicProvider: { appearance in
       switch appearance.name {
@@ -44,7 +41,7 @@ extension SystemColorChip {
 // MARK: ShapeStyle
 
 extension SystemColorChip: ShapeStyle {
-  public func resolve(in environment: EnvironmentValues) -> some ShapeStyle {
+  func resolve(in environment: EnvironmentValues) -> some ShapeStyle {
     systemColor.color(scheme: environment.colorScheme)
   }
 }

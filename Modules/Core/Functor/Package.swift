@@ -12,7 +12,8 @@ let package: Package = .init(
   products: [
     .library(
       name: "Functor",
-      targets: ["Functor"]),
+      targets: ["Functor"]
+    )
   ],
   dependencies: [
   ],
@@ -20,5 +21,7 @@ let package: Package = .init(
     .target(
       name: "Functor",
       dependencies: [
-      ]),
-  ])
+      ]
+    )
+  ]
+)
