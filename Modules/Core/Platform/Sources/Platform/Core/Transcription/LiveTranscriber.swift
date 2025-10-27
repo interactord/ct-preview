@@ -45,7 +45,8 @@ final actor LiveTranscriber: Sendable {
               startLocale: locale,
               endLocale: .none,
               text: result.text,
-              isFinal: result.isFinal
+              isFinal: result.isFinal,
+              createAt: Date().timeIntervalSince1970
             ))
           }
         } catch {

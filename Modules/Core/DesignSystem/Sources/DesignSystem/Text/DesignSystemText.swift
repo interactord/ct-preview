@@ -185,13 +185,26 @@ struct ReplacingText: ViewModifier {
   let content: () -> Text
 
   func build(text: String?) -> some View {
-    if let text, text.contains(replaceFor) {
-      return text.split(separatedBy: replaceFor).reduce(Text("")) {
-        replaceFor != $1 ? $0 + buildOrigin(text: $1) : $0 + content()
-      }
-    } else {
+    guard let text, text.contains(replaceFor) else {
       return buildOrigin(text: text)
     }
+
+    let parts = text.split(separatedBy: replaceFor)
+
+    // Build a single string by replacing occurrences of `replaceFor` with the rendered `content()` text.
+    var resultString = ""
+    for part in parts {
+      if part == replaceFor {
+        // Extract the raw string from the replacement content.
+        // Since we can't get a string from Text directly, we assume replacement is plain text via interpolation.
+        // If richer styling is needed, consider refactoring to return `some View` composed without `+`.
+        resultString += "\(content())"
+      } else {
+        resultString += part
+      }
+    }
+
+    return buildOrigin(text: resultString)
   }
 
   func buildOrigin(text: String?) -> Text {

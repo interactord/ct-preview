@@ -14,6 +14,8 @@ extension DashboardRouteBuilderGroup {
     [
       SplashRouteBuilder().generate(),
       ListeningModeRouteBuilder().generate(),
+      RoomListRouteBuilder().generate(),
+      RoomRouteBuilder().generate(),
 //      LoginRouteBuilder().generate(),
 //      RoomListRouteBuilder().generate(),
 //      SpeechRoomRouteBuilder().generate(),

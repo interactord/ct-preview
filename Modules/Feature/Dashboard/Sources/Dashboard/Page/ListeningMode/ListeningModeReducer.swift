@@ -33,7 +33,8 @@ public struct ListeningModeReducer {
       case .updateItem(let item):
         guard let pickIdx = state.contentViewState.finalList.firstIndex(where: { $0.id == item.id }) else { return .none }
         state.contentViewState.finalList[pickIdx] = item
-        return .none
+        print("AAAA")
+        return sideEffect.createOrUpdateRoomInformation(room: state.roomInformation, item: item)
 
       case .updateStartLanguageItem(let item):
         state.start = item
@@ -80,7 +81,8 @@ public struct ListeningModeReducer {
             endLocale: endLanguageItem.langCode.locale,
             text: item.text,
             isFinal: true,
-            translation: .none
+            translation: .none,
+            createAt: Date().timeIntervalSince1970
           )
           state.contentViewState.finalList.append(item)
           state.contentViewState.draftItem = nil
@@ -91,7 +93,8 @@ public struct ListeningModeReducer {
             startLocale: item.startLocale,
             endLocale: endLanguageItem.langCode.locale,
             text: item.text,
-            isFinal: false
+            isFinal: false,
+            createAt: Date().timeIntervalSince1970
           )
           return .none
         }
@@ -122,6 +125,7 @@ extension ListeningModeReducer {
     var contentViewState = ListeningModePage.ContentList.ViewState()
     var downloadProgress: Double? = .none
     var isPlay = false
+    var roomInformation: RoomInformation? = .none
   }
 
   public enum Action: Equatable, BindableAction, Sendable {
@@ -162,7 +166,8 @@ extension TranscriptionEntity.Item {
       endLocale: endLocale,
       text: text,
       isFinal: true,
-      translation: .none
+      translation: .none,
+      createAt: Date.timeIntervalBetween1970AndReferenceDate
     )
   }
 }

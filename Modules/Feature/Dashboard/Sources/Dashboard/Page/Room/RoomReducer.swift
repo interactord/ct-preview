@@ -3,13 +3,8 @@ import ComposableArchitecture
 import Domain
 import Foundation
 
-// MARK: - SplashReducer
-
 @Reducer
-public struct SplashReducer {
-
-  // MARK: Public
-
+public struct RoomReducer {
   public var body: some ReducerOf<Self> {
     BindingReducer()
     Reduce { state, action in
@@ -22,11 +17,8 @@ public struct SplashReducer {
           CancelID.allCases.map { .cancel(pageID: state.id, id: $0) }
         )
 
-      case .routeToListeningMode:
-        return sideEffect.routeToListeningModePage()
-
-      case .routeToRoomList:
-        return sideEffect.routeToRoomList()
+      case .routeToBack:
+        return sideEffect.routeToBack()
 
       case .throwError(let error):
         sideEffect.useCaseGroup.loggingUseCase.error(error)
@@ -38,39 +30,30 @@ public struct SplashReducer {
     }
   }
 
-  // MARK: Internal
-
-  let sideEffect: SplashSideEffect
+  let sideEffect: RoomSideEffect
 }
 
-extension SplashReducer {
+extension RoomReducer {
+
   @ObservableState
   public struct State: Equatable, Identifiable {
     public let id = UUID()
+    let item: RoomInformation
   }
 
   public enum Action: Equatable, BindableAction, Sendable {
     case binding(BindingAction<State>)
     case teardown
 
-    case routeToListeningMode
-    case routeToRoomList
+    case routeToBack
 
     case throwError(CompositeError)
     case none
   }
 }
 
-extension SplashReducer {
-
-  // MARK: Public
-
-  public enum Route: Equatable, Sendable { }
-
-  // MARK: Private
-
+extension RoomReducer {
   private enum CancelID: Equatable, CaseIterable {
     case teardown
   }
-
 }

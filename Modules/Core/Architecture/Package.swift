@@ -16,6 +16,7 @@ let package: Package = .init(
     )
   ],
   dependencies: [
+    .package(path: "../../Core/Domain"),
     .package(
       url: "https://github.com/pointfreeco/swift-composable-architecture.git",
       from: "1.20.0"
@@ -25,6 +26,7 @@ let package: Package = .init(
     .target(
       name: "Architecture",
       dependencies: [
+        "Domain",
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
       ]
     )

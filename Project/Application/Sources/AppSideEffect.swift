@@ -9,6 +9,7 @@ import Platform
 struct AppSideEffect: DashboardUseCaseGroup, Sendable, DependencyType {
   let loggingUseCase: LoggingUseCase
   let transcriptionUseCase: TranscriptionUseCase
+  let roomUseCase: RoomUseCase
 }
 
 extension AppSideEffect {
@@ -19,7 +20,9 @@ extension AppSideEffect {
       loggingUseCase: loggingUseCase,
       transcriptionUseCase: TranscriptionUseCasePlatform(
         loggingUseCase: loggingUseCase
-      )
+      ),
+      roomUseCase: RoomUseCasePlatform(
+        loggingUseCase: loggingUseCase)
     )
   }
 }

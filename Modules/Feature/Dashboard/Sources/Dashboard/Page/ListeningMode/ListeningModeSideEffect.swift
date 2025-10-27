@@ -41,9 +41,9 @@ extension ListeningModeSideEffect {
   func downloadSpeechModel(item: LanguageEntity.Item) -> Effect<ListeningModeReducer.Action> {
     .run { send in
       let functor = SpeechFunctor(locale: item.langCode.locale)
-      guard await !functor.installed(locale: item.langCode.locale) else { return
+      guard await !functor.installed(locale: item.langCode.locale) else {
         await send(.set(\.downloadProgress, .none))
-        await send(.none)
+        return await send(.none)
       }
 
       await functor.releaseLocales()
@@ -78,6 +78,28 @@ extension ListeningModeSideEffect {
         await send(.none)
       } catch {
         await send(.set(\.isPlay, false))
+        await send(.throwError(error.serialized()))
+      }
+    }
+  }
+
+  func createOrUpdateRoomInformation(room: RoomInformation?, item: TranscriptionEntity.Item) -> Effect<ListeningModeReducer.Action> {
+    .run { send in
+      guard let translation = item.translation else { return await send(.none) }
+      
+      do {
+        let roomInfo: RoomInformation = try await {
+          if let info = room { return info }
+          return try await useCaseGroup.roomUseCase.save(
+            roomInformation: .init(
+              id: UUID().uuidString,
+              title: translation.text,
+              createAt: Date().timeIntervalSince1970,
+              itemList: []))
+        }()
+        await send(.set(\.roomInformation, roomInfo))
+        _ = try await useCaseGroup.roomUseCase.update(roomID: roomInfo.id, item: item)
+      } catch {
         await send(.throwError(error.serialized()))
       }
     }

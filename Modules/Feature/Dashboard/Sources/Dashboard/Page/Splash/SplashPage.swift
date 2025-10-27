@@ -27,6 +27,13 @@ extension SplashPage: View {
         }
         Spacer()
       }
+      HStack {
+        Spacer()
+        Button(action: { store.send(.routeToRoomList) }) {
+          Text("방 리스트")
+        }
+        Spacer()
+      }
       Spacer()
     }
     .background(.background)

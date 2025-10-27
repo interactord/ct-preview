@@ -16,7 +16,14 @@ extension SplashSideEffect {
   func routeToListeningModePage() -> Effect<SplashReducer.Action> {
     .run { send in
       let path = Link.Dashboard.Path.listeningMode.rawValue
-//      await navigator.next(item: .init(path: path, items: .none))
+      await navigator.replace(item: .init(path: path, items: .none))
+      await send(.none)
+    }
+  }
+
+  func routeToRoomList() -> Effect<SplashReducer.Action> {
+    .run { send in
+      let path = Link.Dashboard.Path.roomList.rawValue
       await navigator.replace(item: .init(path: path, items: .none))
       await send(.none)
     }

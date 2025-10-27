@@ -70,7 +70,8 @@ extension LanguageModelFunctor {
 //      print("[LanguageModelFunctor] ✅ Apple Intelligence / Foundation Model is available on this device.")
       return true
 
-    case .unavailable(let reason):
+    case .unavailable:
+//    case .unavailable(let reason):
 //      print("[LanguageModelFunctor] ❌ Foundation Model is unavailable.")
 //      print("[LanguageModelFunctor] Reason: \(reason)")
       return false
