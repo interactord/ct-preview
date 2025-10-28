@@ -28,7 +28,7 @@ extension RoomSideEffect {
       let content = item.itemList.compactMap { $0.translation?.text }.joined(separator: "\n")
 
       do {
-        let result = try await SummeryModelFunctor().fetch(content: content, locale: locale)
+        let result = try await SummeryModelFunctorV2().fetch(content: content, locale: locale)
         let newItem = item.mutate(summery: result)
         _ = try await useCaseGroup.roomUseCase.save(roomInformation: newItem)
         await send(.set(\.item, newItem))

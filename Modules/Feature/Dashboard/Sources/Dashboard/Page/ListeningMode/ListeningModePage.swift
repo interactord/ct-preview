@@ -24,6 +24,7 @@ extension ListeningModePage {
     guard let progress = store.downloadProgress else { return false }
     return progress < 1
   }
+
 }
 
 // MARK: View
@@ -39,7 +40,6 @@ extension ListeningModePage: View {
         onChangeEnd: { store.send(.set(\.end, $0)) },
         onError: { store.send(.throwError($0)) }
       )
-      .padding(EdgeInsets(top: 16, leading: 8, bottom: 4, trailing: 8))
       ContentList(
         viewState: store.contentViewState,
         updateAction: { store.send(.updateItem($0)) },
@@ -64,16 +64,25 @@ extension ListeningModePage: View {
 
         Spacer()
       }
-      .overlay(alignment: .topTrailing) {
-        Button(action: { store.send(.routeToHistoryList) }) {
-          Image(systemName: "clock")
-            .opacity(0.8)
+    }
+    .toolbar {
+      ToolbarItemGroup(placement: .primaryAction) {
+        Button(action: { store.send(.set(\.isAutoDetect, !store.isAutoDetect)) }) {
+          Image(systemName: store.isAutoDetect ? "arrow.left.arrow.right" : "arrow.right")
         }
         .buttonStyle(.plain)
-        .padding(16)
+        .padding(.horizontal, 16)
+
+        Button(action: { store.send(.routeToHistoryList) }) {
+          Image(systemName: "clock")
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 16)
       }
-      .padding(8)
     }
+#if os(iOS)
+    .navigationBarTitleDisplayMode(.inline)
+#endif
     .background(.background)
     .onAppear { }
     .task {
@@ -85,3 +94,4 @@ extension ListeningModePage: View {
     }
   }
 }
+

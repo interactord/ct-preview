@@ -63,8 +63,8 @@ extension ListeningModePage.ContentItem: View {
   @MainActor
   func translation() async {
     guard let item else { return }
-    let endLocale = item.endLocale ?? item.startLocale
-    let functor = TranslationFunctor(startLocale: item.startLocale, endLocale: endLocale)
+    let endLocale = item.localeB ?? item.localeA
+    let functor = TranslationFunctor(startLocale: item.localeA, endLocale: endLocale)
     do {
       let result = try await functor.request(text: item.text.toString())
       var newItem = item
@@ -80,16 +80,17 @@ extension ListeningModePage.ContentItem: View {
     guard let item else { return }
     let llmFunctor = LanguageModelFunctor()
     guard await llmFunctor.checkAppleIntelligenceAvailability() else { return }
-    let endLocale = item.endLocale ?? item.startLocale
+    let endLocale = item.localeB ?? item.localeA
 
     do {
-      let history: [LanguageModelFunctor.SourceItem] = focusItemList.dropLast()
-        .map { .init(locale: $0.startLocale, text: $0.text.toString()) }
+      let historyItemList: [LanguageModelFunctor.SourceItem] = focusItemList.dropLast().map {
+        .init(locale: $0.localeA, text: $0.text.toString())
+      }
 
       let translationItem = LanguageModelFunctor.TranslationItem(
-        startItem: .init(locale: item.startLocale, text: item.text.toString()),
+        startItem: .init(locale: item.localeA, text: item.text.toString()),
         endItem: .init(locale: endLocale, text: item.translation?.text ?? ""),
-        historyItemList: history
+        historyItemList: historyItemList
       )
       let result = try await llmFunctor.correctAndTranslate(item: translationItem)
 

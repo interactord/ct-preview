@@ -10,7 +10,7 @@ protocol DatabaseManager {
   func fetchList<Model: PersistentModel>(sort: KeyPath<Model, some Comparable> & Sendable, ascending: Bool) throws -> [Model]
   func fetch<Model: PersistentModel & IdentifiableModel>(id: String) throws -> Model?
   func save<Model: PersistentModel>(model: Model) throws -> Model
-  func delete<Model: PersistentModel & IdentifiableModel>(id: String) throws -> Model?
+  func delete<Model: PersistentModel & IdentifiableModel>(type: Model.Type, id: String) throws -> Model?
   func deleteAll(type: (some PersistentModel).Type) throws -> Bool
 }
 
@@ -58,7 +58,7 @@ extension DatabaseManagerPlatform: DatabaseManager {
     return model
   }
 
-  func delete<Model: PersistentModel & IdentifiableModel>(id: String) throws -> Model? {
+  func delete<Model: PersistentModel & IdentifiableModel>(type: Model.Type, id: String) throws -> Model? {
     let context = modelContainer.mainContext
     // Use a typed fetch to avoid generic ambiguity with `context.model(for:)`.
     let descriptor = FetchDescriptor<Model>(

@@ -29,7 +29,6 @@ extension [String: Plist.Value] {
         "UIInterfaceOrientationLandscapeRight",
       ]),
       "UIStatusBarHidden": .boolean(true),
-      "UIRequiresFullScreen": .boolean(true),
       "LSRequiresIPhoneOS": .boolean(true),
       "UIApplicationSceneManifest": .dictionary([
         "UIApplicationSupportsMultipleScenes": .boolean(false)

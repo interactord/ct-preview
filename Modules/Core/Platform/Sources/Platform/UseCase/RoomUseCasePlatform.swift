@@ -65,6 +65,12 @@ extension RoomUseCasePlatform: RoomUseCase {
   public func deleteAll() async throws -> Bool {
     try dbManager.deleteAll(type: RoomInformationModel.self)
   }
+
+  @MainActor
+  public func delete(item: RoomInformation) async throws -> Bool {
+    _ = try dbManager.delete(type: RoomInformationModel.self, id: item.id)
+    return true
+  }
 }
 
 extension RoomInformation {

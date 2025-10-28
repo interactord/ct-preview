@@ -6,4 +6,5 @@ public protocol RoomUseCase: Sendable {
   func getModelList() async throws -> [RoomInformation]
   func getModel(roomID: String) async throws -> RoomInformation?
   func deleteAll() async throws -> Bool
+  func delete(item: RoomInformation) async throws -> Bool
 }

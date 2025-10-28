@@ -1,0 +1,140 @@
+default_platform(:ios)
+
+ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "600"
+ENV["FASTLANE_XCODE_LIST_TIMEOUT"] = "600"
+
+platform:ios do
+
+  lane:all_unit_test do
+    test("FlittoV2-Workspace")
+  end
+
+lane:qa do
+    distributionQA()
+  end
+
+lane:tf do
+    distributionTestFlight()
+  end
+
+end
+
+def distributionQA()
+# 빌드 클린
+clean_build_artifacts
+
+match(readonly: true, type: "adhoc")
+
+# 버전 변경
+path = "Project/Application/Derived/InfoPlists/CT-Preview-Info.plist"
+
+new_appVersion = `date +%y.%m.%d | tr -d ‘\n’`
+set_info_plist_value(path: path, key: "CFBundleShortVersionString", value: new_appVersion.to_s)
+puts("버전 넘버 " + new_appVersion)
+
+new_appBundle = `date +%y%m%d%s | tr -d ‘\n’`
+set_info_plist_value(path: path, key: "CFBundleVersion", value: new_appBundle)
+puts("번들 넘버" + new_appBundle)
+
+# 빌드
+gym(
+  scheme: "CT-Preview",
+  silent: false,
+  clean: true,
+  include_bitcode: true,
+  export_method: "ad-hoc",
+  output_directory: "./fastlane",
+  output_name: "adhoc.ipa",
+  export_options: {
+    provisioningProfiles: {
+      "com.flitto.previewer" => "match AdHoc com.flitto.previewer",
+    }
+  }
+)
+
+# Firebase 배포
+firebase_app_distribution(
+  app: "1:968207732651:ios:6e6ca3ab2e42a0fc9e0cee",
+  firebase_cli_token: "1//0eajmvbunUFbdCgYIARAAGA4SNwF-L9IrtfsMpxtyZFt9vDexeGOVGfS4LiNvuiseniLusd_SMBJvdrtAUUl3PDVucA_vwjcsjIg",
+  release_notes_file: "./FirebaseConfig/realease_notes.txt",
+  groups_file: "./FirebaseConfig/groups.txt",
+  ipa_path: "fastlane/adhoc.ipa",
+  debug: true
+)
+
+# Firebase crashlytics 업로드
+upload_symbols_to_crashlytics(
+  app_id: "1:968207732651:ios:6e6ca3ab2e42a0fc9e0cee",
+  binary_path: "FirebaseConfig/upload-symbols",
+  dsym_path: "fastlane/adhoc.app.dSYM.zip")
+
+end
+
+def distributionTestFlight()
+# 빌드 클린
+clean_build_artifacts
+
+# 앱스토어 커넥트 토큰 로드
+app_store_connect_api_key(
+  key_id: "JF59DXZCMR",
+  issuer_id: "69a6de75-f7c3-47e3-e053-5b8c7c11a4d1",
+  key_filepath: "fastlane/Auth_key.p8",
+  in_house: false
+)
+
+match(readonly: true, type: "appstore")
+
+# 버전 변경
+path = "Project/LiveTranslation/Derived/InfoPlists/LiveTranslation-Info.plist"
+appClipPath = "Project/LiveTranslation/Derived/InfoPlists/LiveTranslation-AppClip-Info.plist"
+
+new_appVersion = `date +%y.%m.%d | tr -d ‘\n’`
+set_info_plist_value(path: path, key: "CFBundleShortVersionString", value: new_appVersion.to_s)
+set_info_plist_value(path: appClipPath, key: "CFBundleShortVersionString", value: new_appVersion.to_s)
+puts("버전 넘버 " + new_appVersion)
+
+new_appBundle = `date +%y%m%d%s | tr -d ‘\n’`
+set_info_plist_value(path: path, key: "CFBundleVersion", value: new_appBundle)
+set_info_plist_value(path: appClipPath, key: "CFBundleVersion", value: new_appBundle)
+puts("번들 넘버" + new_appBundle)
+
+# 빌드
+gym(
+  scheme: "LiveTranslation",
+  silent: false,
+  clean: true,
+  include_bitcode: false,
+  export_method: "app-store",
+  output_directory: "./fastlane",
+  output_name: "appstore.ipa",
+  export_options: {
+    provisioningProfiles: {
+      "com.flitto.livetr" => "match AppStore com.flitto.livetr",
+      "com.flitto.livetr.appclip" => "match AppStore com.flitto.livetr.appclip"
+    }
+  }
+)
+
+# 유효성 검사
+verify_build(
+  provisioning_type: "distribution",
+  bundle_identifier: "com.flitto.livetr"
+)
+
+# 테스트 플라이트 업로드
+upload_to_testflight(
+  username: "iosdev@flitto.com",
+  app_identifier: "com.flitto.livetr",
+  team_name: "FLITTO Inc.",
+  ipa: "fastlane/appstore.ipa",
+  skip_waiting_for_build_processing: true,
+  itc_provider: "7836J6Z5N8"
+)
+
+# Firebase crashlytics 업로드 (prod)
+upload_symbols_to_crashlytics(
+  app_id: "1:968207732651:ios:6e6ca3ab2e42a0fc9e0cee",
+  binary_path: "FirebaseConfig/upload-symbols",
+  dsym_path: "fastlane/appstore.app.dSYM.zip")
+
+end

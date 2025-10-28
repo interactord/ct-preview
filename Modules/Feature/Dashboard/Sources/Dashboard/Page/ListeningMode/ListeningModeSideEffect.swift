@@ -4,6 +4,7 @@ import Domain
 import Foundation
 import Functor
 import LinkNavigatorSwiftUI
+import CoreMedia
 
 // MARK: - ListeningModeSideEffect
 
@@ -20,6 +21,7 @@ extension ListeningModeSideEffect {
       await send(.none)
     }
   }
+
 
   func routeToHistoryList() -> Effect<ListeningModeReducer.Action> {
     .run { send in
@@ -62,12 +64,12 @@ extension ListeningModeSideEffect {
     }
   }
 
-  func startTranscription(item: LanguageEntity.Item) -> Effect<ListeningModeReducer.Action> {
+  func startTranscription(itemA: LanguageEntity.Item, itemB: LanguageEntity.Item?) -> Effect<ListeningModeReducer.Action> {
     .run { send in
       await send(.set(\.isPlay, true))
 
       do {
-        for try await item in try await useCaseGroup.transcriptionUseCase.transcript(item: item) {
+        for try await item in try await useCaseGroup.transcriptionUseCase.transcript(itemA: itemA, itemB: itemB) {
           await send(.fetchTranscriptItem(item))
         }
       } catch {
@@ -116,6 +118,9 @@ extension ListeningModeSideEffect {
         await send(.throwError(error.serialized()))
       }
     }
+  }
+
+  func diff(list: [TranscriptionEntity.Item], item: TranscriptionEntity.Item) {
   }
 }
 
@@ -195,5 +200,16 @@ private struct AsyncDistinctUntilChangedSequence<Base: AsyncSequence>: AsyncSequ
 
   fileprivate func makeAsyncIterator() -> Iterator {
     Iterator(baseIterator: base.makeAsyncIterator(), areEquivalent: areEquivalent, previousEmitted: nil)
+  }
+}
+
+extension CMTimeRange {
+  fileprivate func rangesOverlap(target: CMTimeRange) -> Bool {
+    let aStart = start
+    let aEnd = start + duration
+    let bStart = target.start
+    let bEnd = target.start + target.duration
+    // 겹침: aEnd > bStart && bEnd > aStart
+    return CMTimeCompare(aEnd, bStart) == 1 && CMTimeCompare(bEnd, aStart) == 1
   }
 }

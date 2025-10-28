@@ -34,6 +34,18 @@ extension RoomListSideEffect {
     }
   }
 
+  func delete(item: RoomInformation) -> Effect<RoomListReducer.Action> {
+    .run { send in
+      do {
+        _ = try await useCaseGroup.roomUseCase.delete(item: item)
+        await send(.getRoomList)
+      } catch {
+        useCaseGroup.loggingUseCase.error(error)
+        await send(.none)
+      }
+    }
+  }
+
   func routeToRoomDetail(item: RoomInformation) -> Effect<RoomListReducer.Action> {
     .run { send in
       await navigator.next(item: .init(path: Link.Dashboard.Path.room.rawValue, items: item))
@@ -43,7 +55,7 @@ extension RoomListSideEffect {
 
   func routeToBack() -> Effect<RoomListReducer.Action> {
     .run { send in
-      await navigator.replace(item: .init(path: Link.Dashboard.Path.splash.rawValue, items: .none))
+      await navigator.back()
       await send(.none)
     }
   }

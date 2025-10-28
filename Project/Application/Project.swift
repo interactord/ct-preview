@@ -16,7 +16,7 @@ let targetList: [Target] = [
     headers: .none,
     entitlements: .none,
     scripts: [],
-    dependencies: compositeDependency,
+    dependencies: compositeDependencyIOS,
     settings: .defaultConfigSettings(isDev: true),
     coreDataModels: [],
     environmentVariables: [:],
@@ -77,6 +77,21 @@ let project = Project(
   resourceSynthesizers: .default
 )
 
+private var compositeDependencyIOS: [TargetDependency] {
+  [
+    .package(product: "FirebaseCrashlytics"),
+    .package(product: "FirebaseAnalytics"),
+    .package(product: "FirebasePerformance"),
+    .package(product: "Architecture", type: .runtime, condition: .none),
+    .package(product: "DesignSystem", type: .runtime, condition: .none),
+    .package(product: "Domain", type: .runtime, condition: .none),
+    .package(product: "Functor", type: .runtime, condition: .none),
+    .package(product: "Platform", type: .runtime, condition: .none),
+    .package(product: "LinkNavigatorSwiftUI", type: .runtime, condition: .none),
+    .package(product: "Dashboard", type: .runtime, condition: .none),
+  ]
+}
+
 private var compositeDependency: [TargetDependency] {
   [
     .package(product: "Architecture", type: .runtime, condition: .none),
@@ -89,8 +104,13 @@ private var compositeDependency: [TargetDependency] {
   ]
 }
 
+
+
 private var compositePackageList: [Package] {
   [
+    .package(
+      url: "https://github.com/firebase/firebase-ios-sdk.git",
+      .upToNextMajor(from: "10.23.1")),
     .local(path: .relativeToRoot("Modules/Core/Architecture")),
     .local(path: .relativeToRoot("Modules/Core/DesignSystem")),
     .local(path: .relativeToRoot("Modules/Core/Domain")),

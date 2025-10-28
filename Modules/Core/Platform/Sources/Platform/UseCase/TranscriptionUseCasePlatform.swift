@@ -10,7 +10,7 @@ public struct TranscriptionUseCasePlatform: Sendable {
   }
 
   let loggingUseCase: LoggingUseCase
-  let actor = LiveRecorder()
+  let liveRecorder = LiveRecorder()
 
 }
 
@@ -18,12 +18,12 @@ public struct TranscriptionUseCasePlatform: Sendable {
 
 @available(iOS 26.0, *)
 extension TranscriptionUseCasePlatform: TranscriptionUseCase {
-  public func transcript(item: LanguageEntity.Item) async throws -> AsyncThrowingStream<TranscriptionEntity.Item, Error> {
-    try await actor.prepare(locale: item.langCode.locale)
-    return await actor.transcript()
+  public func transcript(itemA: LanguageEntity.Item, itemB: LanguageEntity.Item?) async throws -> AsyncThrowingStream<TranscriptionEntity.Item, Error> {
+    try await liveRecorder.prepare(localeA: itemA.langCode.locale, localeB: itemB?.langCode.locale)
+    return await liveRecorder.transcript()
   }
 
   public func stop() async throws {
-    try await actor.stop()
+    try await liveRecorder.stop()
   }
 }

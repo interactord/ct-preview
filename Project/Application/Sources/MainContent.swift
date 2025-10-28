@@ -17,7 +17,7 @@ extension MainContent: View {
     SingleNavigation(
       navigator: navigator,
       rootLink: .init(
-        path: Link.Dashboard.Path.splash.rawValue,
+        path: Link.Dashboard.Path.listeningMode.rawValue,
         items: .none
       )
     ) {

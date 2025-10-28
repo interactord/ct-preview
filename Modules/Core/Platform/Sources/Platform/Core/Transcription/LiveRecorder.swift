@@ -8,18 +8,18 @@ import Speech
 
 @available(iOS 26.0, *)
 final actor LiveRecorder {
-  private var transcriber: LiveTranscriber? = .none
+  private var transcriber: LiveTranscriberV2? = .none
   private let audioEngine = AVAudioEngine()
 }
 
 @available(iOS 26.0, *)
 extension LiveRecorder {
 
-  func prepare(locale: Locale) async throws {
+  func prepare(localeA: Locale, localeB: Locale?) async throws {
     if transcriber != nil { release() }
 
     try setupSession()
-    transcriber = try await setupTranscriber(locale: locale)
+    transcriber = try await setupTranscriber(localeA: localeA, localeB: localeB)
     try await transcriber?.prepare()
   }
 
@@ -103,10 +103,13 @@ extension LiveRecorder {
     #endif
   }
 
-  private func setupTranscriber(locale: Locale) async throws -> LiveTranscriber {
-    await SpeechFunctor(locale: locale).releaseLocales()
+  private func setupTranscriber(localeA: Locale, localeB: Locale?) async throws -> LiveTranscriberV2 {
+    await SpeechFunctor(locale: localeA).releaseLocales()
+    if let localeB {
+      await SpeechFunctor(locale: localeB).releaseLocales()
+    }
 
-    return .init(locale: locale)
+    return .init(localeA: localeA, localeB: localeB)
   }
 
   private func setupAudioEngine() throws {

@@ -7,36 +7,35 @@ extension TranscriptionEntity {
     // MARK: Lifecycle
 
     public init(
-      uuid: String? = .none,
-      startLocale: Locale,
-      endLocale: Locale?,
+      id: String,
+      localeA: Locale,
+      localeB: Locale?,
       text: AttributedString,
       isFinal: Bool,
       translation: TranslationItem? = .none,
-      createAt: TimeInterval
+      createAt: TimeInterval,
+      localeConfidence: [String: Int]? = .none
     ) {
-      self.uuid = uuid
-      self.startLocale = startLocale
-      self.endLocale = endLocale
+      self.id = id
+      self.localeA = localeA
+      self.localeB = localeB
       self.text = text
       self.isFinal = isFinal
       self.translation = translation
       self.createAt = createAt
+      self.localeConfidence = localeConfidence
     }
 
     // MARK: Public
 
-    public let uuid: String?
-    public let startLocale: Locale
-    public let endLocale: Locale?
+    public let id: String
+    public let localeA: Locale
+    public let localeB: Locale?
     public var text: AttributedString
     public let isFinal: Bool
     public var translation: TranslationItem?
     public let createAt: TimeInterval
-
-    public var id: String {
-      uuid ?? "\(startLocale) + \(text) + \(isFinal)"
-    }
+    public var localeConfidence: [String: Int]?
   }
 
   public struct TranslationItem: Equatable, Sendable, Identifiable, Codable {

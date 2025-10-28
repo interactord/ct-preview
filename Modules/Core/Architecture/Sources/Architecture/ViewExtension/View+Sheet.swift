@@ -6,10 +6,12 @@ extension View {
   public func sheet<Enum: Sendable, Case>(
     unwrapping enum: Binding<Enum?>,
     case caseKeyPath: CaseKeyPath<Enum, Case>,
+    onDismiss: (() -> Void)? = .none,
     @ViewBuilder content: @escaping (Case) -> some View
   ) -> some View {
     sheet(
       isPresented: .constant(`enum`.case(caseKeyPath).wrappedValue != nil),
+      onDismiss: onDismiss,
       content: { `enum`.case(caseKeyPath).wrappedValue.map(content) }
     )
   }

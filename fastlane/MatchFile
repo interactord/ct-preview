@@ -1,0 +1,24 @@
+## Notice ##
+## git.phase : vmfflxh0
+
+git_url("https://github.com/flitto/ios_codesign")
+
+storage_mode("git")
+
+type("adhoc")
+
+app_identifier([
+	"com.flitto.qr.place.application",
+	"com.flitto.twitter",
+	"com.flitto.twitter.widget",
+	"com.flitto.previewer",
+	"com.flitto.imageCollector",
+	"b2b.flitto.talk",
+	"com.flitto.livetr",
+	"com.flitto.livetr.appclip",
+	"com.flitto.ctp",
+	"com.flitto.ctp.appclip",
+	"com.flitto.previewer"
+])
+username("jiwonsis@nate.com")
+# readonly(true)

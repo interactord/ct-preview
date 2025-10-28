@@ -1,0 +1,6 @@
+app_identifier("com.flitto.twitter") # The bundle identifier of your app
+apple_id("iosdev@flitto.com") # Your Apple email address
+# apple_id("jiwonsis@nate.com") # Your Apple email address
+
+itc_team_id("958429") # App Store Connect Team ID
+team_id("7836J6Z5N8") # Developer Portal Team ID

@@ -10,13 +10,11 @@ extension ListeningModePage {
 
     init(
       title: String = "",
-      noSelectDescription: String = "언어를 선택해주세요",
-      selectedLanguage: Binding<LanguageEntity.Item?>,
-      itemList: [LanguageEntity.Item],
+      selectedLanguage: Binding<String>,
+      itemList: [String],
       disabled: Bool
     ) {
       self.title = title
-      self.noSelectDescription = noSelectDescription
       self.selectedLanguage = selectedLanguage
       self.itemList = itemList
       self.disabled = disabled
@@ -25,15 +23,18 @@ extension ListeningModePage {
     // MARK: Internal
 
     let title: String
-    let noSelectDescription: String
-    let selectedLanguage: Binding<LanguageEntity.Item?>
-    let itemList: [LanguageEntity.Item]
+    let selectedLanguage: Binding<String>
+    let itemList: [String]
     let disabled: Bool
 
   }
 }
 
 extension ListeningModePage.LanguagePicker {
+  private var modelList: [String] {
+    LanguageEntity.LangCode.allCases.map(\.modelName)
+  }
+
   private func stateImage(item: LanguageEntity.Item) -> String {
     switch item.status {
     case .notInstalled: "arrow.down.circle"
@@ -47,18 +48,12 @@ extension ListeningModePage.LanguagePicker: View {
 
   var body: some View {
     Picker(.init(title), selection: selectedLanguage) {
-      Text(noSelectDescription)
-        .tag(nil as LanguageEntity.Item?)
-
-      ForEach(itemList) { item in
-        HStack {
-          Text(item.langCode.modelName)
-          Spacer()
-          Image(systemName: stateImage(item: item))
-        }
-        .tag(Optional(item))
+      ForEach(itemList, id: \.self) { item in
+        Text(item)
+          .tag(item)
       }
     }
+    .pickerStyle(.menu)
     .disabled(disabled)
   }
 }

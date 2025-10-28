@@ -23,34 +23,39 @@ extension RoomListPage: View {
         item: item,
         tapAction: { store.send(.routeToRoomDetail($0)) }
       )
+      .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+        Button(role: .destructive, action: {
+          store.send(.deleteItem(item))
+        }) {
+          Label("삭제", systemImage: "trash")
+        }
+      }
     }
+    .listRowInsets(.zero)
+    .listStyle(.automatic)
     .scrollContentBackground(.hidden)
-    .listRowBackground(Color.clear)
     .listRowSeparator(.hidden)
-    .listStyle(.plain)
+
     .toolbar {
       ToolbarItemGroup(placement: .navigation) {
         Button(action: { store.send(.routeToBack) }) {
           Image(systemName: "arrow.backward")
-            .padding(.horizontal, 16)
         }
         .buttonStyle(.plain)
       }
-      .sharedBackgroundVisibility(.hidden)
 
       ToolbarItemGroup(placement: .primaryAction) {
         Button(action: { store.send(.deleteAllItem) }) {
           Text("전부삭제")
+            .padding(.horizontal, 8)
             .foregroundStyle(Color.red)
             .fontWeight(.bold)
-            .padding(.horizontal, 16)
         }
         .buttonStyle(.plain)
       }
-      .sharedBackgroundVisibility(.hidden)
     }
     .background(.background)
-    .onAppear {
+    .task {
       store.send(.getRoomList)
     }
     .onDisappear {
@@ -83,12 +88,11 @@ extension RoomListPage.RoomItem: View {
           Spacer(minLength: .zero)
         }
       }
-      .background(.background)
+      .background(Color.clear)
       .onTapGesture {
         tapAction(item)
       }
     }
-    .background(SystemColor.Background.Grouped.elevated.color)
     .padding(16)
   }
 }
@@ -112,4 +116,10 @@ extension DateFormatter {
     formatter.timeStyle = .short
     return formatter
   }()
+}
+
+extension EdgeInsets {
+  fileprivate static var zero: EdgeInsets {
+    EdgeInsets(top: .zero, leading: .zero, bottom: .zero, trailing: .zero)
+  }
 }

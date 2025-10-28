@@ -36,6 +36,9 @@ public struct RoomListReducer {
       case .deleteAllItem:
         return sideEffect.deleteAllItem()
 
+      case .deleteItem(let item):
+        return sideEffect.delete(item: item)
+
       case .fetchRoomList(let result):
         state.fetchRoomList.isLoading = false
         switch result {
@@ -80,6 +83,7 @@ extension RoomListReducer {
     case routeToBack
 
     case deleteAllItem
+    case deleteItem(RoomInformation)
 
     case fetchRoomList(Result<[RoomInformation], CompositeError>)
     case throwError(CompositeError)

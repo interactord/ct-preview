@@ -3,6 +3,7 @@ import ComposableArchitecture
 import DesignSystem
 import Domain
 import SwiftUI
+import Functor
 
 // MARK: - RoomPage
 
@@ -14,8 +15,10 @@ struct RoomPage {
 
   @State var frameWidth = CGFloat.zero
   @State var frameHeight = CGFloat.zero
-
   @Bindable private var store: StoreOf<RoomReducer>
+
+  @State private var isUseAI = false
+  private let llm = LanguageModelFunctor()
 }
 
 extension RoomPage {
@@ -32,6 +35,7 @@ extension RoomPage: View {
       GeometryReader { proxy in
         List(store.item.itemList) { item in
           RoomPage.ContentItem(item: item)
+            .padding(8)
         }
         .scrollContentBackground(.hidden)
         .listRowBackground(Color.clear)
@@ -48,29 +52,35 @@ extension RoomPage: View {
       ToolbarItemGroup(placement: .navigation) {
         Button(action: { store.send(.routeToBack) }) {
           Image(systemName: "arrow.backward")
-            .padding(.horizontal, 16)
         }
         .buttonStyle(.plain)
       }
+      #if os(macOS)
       .sharedBackgroundVisibility(.hidden)
+      #endif
 
       ToolbarItemGroup(placement: .primaryAction) {
-        if store.item.summery != .none {
-          Button(action: { store.send(.routeToSummerySheet) }) {
-            Text("요약 내용 보기")
-              .fontWeight(.bold)
-              .padding(.horizontal, 16)
+        if isUseAI {
+          if store.item.summery != .none {
+            Button(action: { store.send(.routeToSummerySheet) }) {
+              Text("요약 내용 보기")
+                .fontWeight(.bold)
+                .padding(.horizontal, 8)
+            }
+            .tint(Color.accentColor)
+            .buttonStyle(.plain)
+          } else {
+            ProgressView()
+              .progressViewStyle(.circular)
+              .controlSize(.small)
+              .scaleEffect(0.8)
           }
-          .tint(Color.accentColor)
-          .buttonStyle(.plain)
-        } else {
-          ProgressView()
-            .progressViewStyle(.circular)
-            .controlSize(.small)
-            .scaleEffect(0.8)
         }
       }
+      #if os(macOS)
       .sharedBackgroundVisibility(.hidden)
+      #endif
+
     }
     #if os(macOS)
     .sheet(unwrapping: $store.route, case: \.summerySheet) { _ in
@@ -95,6 +105,13 @@ extension RoomPage: View {
         ScrollView {
           HStack {
             Text(store.item.summery ?? "")
+            Spacer()
+//            if let md = try? AttributedString(markdown: store.item.summery ?? "", options: .InterpretedSyntax) {
+//              Text(md)
+//            } else {
+//
+//            }
+
           }
         }
       }
@@ -103,44 +120,45 @@ extension RoomPage: View {
       .frame(width: frameWidth * 0.8, height: frameHeight * 0.8)
     }
     #else
-    .sheet(unwrapping: $store.route, case: \.summerySheet) { _ in
-        NavigationView {
-          VStack {
-            ScrollView {
-              HStack {
-                Text(store.item.summery ?? "")
-              }
+    .sheet(unwrapping: $store.route, case: \.summerySheet, onDismiss: { store.send(.routeClear) }) { _ in
+      NavigationView {
+        VStack {
+          ScrollView {
+            HStack {
+              Text(store.item.summery ?? "")
             }
-            .scrollContentBackground(.hidden)
-            .padding(16)
           }
-          .background(.background)
-          .toolbar {
-            ToolbarItemGroup(placement: .navigation) {
-              Button(action: { store.send(.routeClear) }) {
-                Image(systemName: "xmark")
-                  .fontWeight(.bold)
-              }
-              .tint(Color.accentColor)
-              .buttonStyle(.plain)
+          .scrollContentBackground(.hidden)
+          .padding(16)
+        }
+        .background(.background)
+        .toolbar {
+          ToolbarItemGroup(placement: .navigation) {
+            Button(action: { store.send(.routeClear) }) {
+              Image(systemName: "xmark")
+                .fontWeight(.bold)
             }
+            .tint(Color.accentColor)
+            .buttonStyle(.plain)
+          }
 
-            ToolbarItem(placement: .primaryAction) {
-              ShareLink(item: store.item.summery ?? "") {
-                Label("요약 공유", systemImage: "square.and.arrow.up")
-              }
+          ToolbarItem(placement: .primaryAction) {
+            ShareLink(item: store.item.summery ?? "") {
+              Label("요약 공유", systemImage: "square.and.arrow.up")
             }
           }
         }
       }
+    }
     #endif
-      .background(.background)
-      .task {
-        store.send(.getSummery)
-      }
-      .onDisappear {
-        store.send(.teardown)
-      }
+    .background(.background)
+    .task {
+      isUseAI = await llm.checkAppleIntelligenceAvailability()
+      store.send(.getSummery)
+    }
+    .onDisappear {
+      store.send(.teardown)
+    }
   }
 }
 

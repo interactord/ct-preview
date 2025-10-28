@@ -66,6 +66,7 @@ extension ListeningModePage.ContentList: View {
         .listRowBackground(Color.clear)
         .listStyle(.plain)
         .onChange(of: viewState.draftItem) { _, new in
+          guard viewState.finalList.count > 3 else { return }
           guard new != .none else { return }
           withAnimation(.easeInOut) {
             proxy.scrollTo(lastItem, anchor: .top)
