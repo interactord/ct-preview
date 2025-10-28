@@ -21,8 +21,10 @@ extension MainContent: View {
         items: .none
       )
     ) {
-      SystemColor.Background.Grouped.base.color
-        .navigationToolBar()
+      VStack {
+        Rectangle()
+          .fill(.background)
+      }
     }
   }
 }

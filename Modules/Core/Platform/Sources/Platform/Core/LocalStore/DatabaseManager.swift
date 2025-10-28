@@ -7,11 +7,11 @@ import Foundation
 /// All methods run on the main actor because `ModelContainer.mainContext` is main-actor isolated.
 @MainActor
 protocol DatabaseManager {
-  func fetchList<Model: PersistentModel, T: Comparable>(sort: KeyPath<Model, T> & Sendable, ascending: Bool) throws -> [Model]
+  func fetchList<Model: PersistentModel>(sort: KeyPath<Model, some Comparable> & Sendable, ascending: Bool) throws -> [Model]
   func fetch<Model: PersistentModel & IdentifiableModel>(id: String) throws -> Model?
   func save<Model: PersistentModel>(model: Model) throws -> Model
   func delete<Model: PersistentModel & IdentifiableModel>(id: String) throws -> Model?
-  func deleteAll<Model: PersistentModel>(type: Model.Type) throws -> Bool
+  func deleteAll(type: (some PersistentModel).Type) throws -> Bool
 }
 
 // MARK: - DatabaseManagerPlatform
@@ -35,13 +35,12 @@ struct DatabaseManagerPlatform {
 
 extension DatabaseManagerPlatform: DatabaseManager {
 
-  func fetchList<Model: PersistentModel, T: Comparable>(sort: KeyPath<Model, T> & Sendable, ascending: Bool) throws -> [Model] {
-    let sortDescriptor = SortDescriptor.init(sort, order: ascending ? .forward : .reverse)
+  func fetchList<Model: PersistentModel>(sort: KeyPath<Model, some Comparable> & Sendable, ascending: Bool) throws -> [Model] {
+    let sortDescriptor = SortDescriptor(sort, order: ascending ? .forward : .reverse)
     let fetchDescriptor = FetchDescriptor<Model>(sortBy: [sortDescriptor])
 
     do {
-      let list = try modelContainer.mainContext.fetch(fetchDescriptor)
-      return list
+      return try modelContainer.mainContext.fetch(fetchDescriptor)
     }
   }
 

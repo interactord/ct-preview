@@ -3,8 +3,13 @@ import ComposableArchitecture
 import Domain
 import Foundation
 
+// MARK: - RoomListReducer
+
 @Reducer
 public struct RoomListReducer {
+
+  // MARK: Public
+
   public var body: some ReducerOf<Self> {
     BindingReducer()
     Reduce { state, action in
@@ -52,6 +57,8 @@ public struct RoomListReducer {
     }
   }
 
+  // MARK: Internal
+
   let sideEffect: RoomListSideEffect
 }
 
@@ -61,7 +68,7 @@ extension RoomListReducer {
   public struct State: Equatable, Identifiable {
     public let id = UUID()
 
-    var fetchRoomList: FetchState.Data<[RoomInformation]> = .init(isLoading: false, value: [])
+    var fetchRoomList = FetchState.Data<[RoomInformation]>(isLoading: false, value: [])
   }
 
   public enum Action: Equatable, BindableAction, Sendable {

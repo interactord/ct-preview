@@ -64,6 +64,14 @@ extension ListeningModePage: View {
 
         Spacer()
       }
+      .overlay(alignment: .topTrailing) {
+        Button(action: { store.send(.routeToHistoryList) }) {
+          Image(systemName: "clock")
+            .opacity(0.8)
+        }
+        .buttonStyle(.plain)
+        .padding(16)
+      }
       .padding(8)
     }
     .background(.background)

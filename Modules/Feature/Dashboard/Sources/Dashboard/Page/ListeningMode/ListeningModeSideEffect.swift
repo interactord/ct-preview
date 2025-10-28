@@ -21,6 +21,13 @@ extension ListeningModeSideEffect {
     }
   }
 
+  func routeToHistoryList() -> Effect<ListeningModeReducer.Action> {
+    .run { send in
+      await navigator.next(item: .init(path: Link.Dashboard.Path.roomList.rawValue, items: .none))
+      await send(.none)
+    }
+  }
+
   func fetchLanguageItemList() -> Effect<ListeningModeReducer.Action> {
     .run { send in
       let newItem: [LanguageEntity.Item] = await LanguageEntity.LangCode.allCases.asyncMap { langCode in
@@ -83,10 +90,13 @@ extension ListeningModeSideEffect {
     }
   }
 
-  func createOrUpdateRoomInformation(room: RoomInformation?, item: TranscriptionEntity.Item) -> Effect<ListeningModeReducer.Action> {
+  func createOrUpdateRoomInformation(
+    room: RoomInformation?,
+    item: TranscriptionEntity.Item
+  ) -> Effect<ListeningModeReducer.Action> {
     .run { send in
       guard let translation = item.translation else { return await send(.none) }
-      
+
       do {
         let roomInfo: RoomInformation = try await {
           if let info = room { return info }
@@ -95,7 +105,10 @@ extension ListeningModeSideEffect {
               id: UUID().uuidString,
               title: translation.text,
               createAt: Date().timeIntervalSince1970,
-              itemList: []))
+              itemList: [],
+              summery: .none
+            )
+          )
         }()
         await send(.set(\.roomInformation, roomInfo))
         _ = try await useCaseGroup.roomUseCase.update(roomID: roomInfo.id, item: item)

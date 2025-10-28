@@ -22,7 +22,8 @@ extension AppSideEffect {
         loggingUseCase: loggingUseCase
       ),
       roomUseCase: RoomUseCasePlatform(
-        loggingUseCase: loggingUseCase)
+        loggingUseCase: loggingUseCase
+      )
     )
   }
 }

@@ -20,14 +20,14 @@ let package: Package = .init(
     .package(
       url: "https://github.com/pointfreeco/swift-composable-architecture.git",
       from: "1.20.0"
-    )
+    ),
   ],
   targets: [
     .target(
       name: "Architecture",
       dependencies: [
         "Domain",
-        .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
       ]
     )
   ]

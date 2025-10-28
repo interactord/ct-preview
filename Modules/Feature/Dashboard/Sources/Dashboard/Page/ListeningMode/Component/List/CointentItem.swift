@@ -45,6 +45,7 @@ extension ListeningModePage.ContentItem: View {
             Text(translation.text)
               .font(.system(size: 18, weight: .bold, design: .default))
               .foregroundStyle(Color.accentColor)
+              .fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: .zero)
           }
         }

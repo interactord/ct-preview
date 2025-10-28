@@ -4,6 +4,8 @@ import Domain
 import Foundation
 import LinkNavigatorSwiftUI
 
+// MARK: - RoomListSideEffect
+
 struct RoomListSideEffect: Sendable {
   let navigator: SingleNavigator
   let useCaseGroup: DashboardUseCaseGroup

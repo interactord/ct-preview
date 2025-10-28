@@ -2,6 +2,8 @@ import Domain
 import Foundation
 import SwiftData
 
+// MARK: - RoomInformationModel
+
 @Model
 class RoomInformationModel: Identifiable, IdentifiableModel {
 
@@ -11,27 +13,29 @@ class RoomInformationModel: Identifiable, IdentifiableModel {
     id: String,
     title: String,
     createAt: TimeInterval = Date().timeIntervalSince1970,
-    itemListData: Data
-  )
-  {
+    itemListData: Data,
+    summery: String?
+  ) {
     self.id = id
     self.title = title
     self.createAt = createAt
-    self._itemListData = itemListData
+    _itemListData = itemListData
+    self.summery = summery
   }
 
   convenience init(
     id: String,
     title: String,
     createAt: TimeInterval = Date().timeIntervalSince1970,
-    itemList: [TranscriptionEntity.Item]
-  )
-  {
+    itemList: [TranscriptionEntity.Item],
+    summery: String?
+  ) {
     self.init(
       id: id,
       title: title,
       createAt: createAt,
-      itemListData: itemList.encoded()
+      itemListData: itemList.encoded(),
+      summery: summery
     )
   }
 
@@ -41,12 +45,17 @@ class RoomInformationModel: Identifiable, IdentifiableModel {
 
   var title: String
   var createAt: TimeInterval
-  @Attribute(.externalStorage) private var _itemListData: Data = Data()
+  var summery: String?
 
   var itemList: [TranscriptionEntity.Item] {
     get { _itemListData.decoded() }
     set { _itemListData = newValue.encoded() }
   }
+
+  // MARK: Private
+
+  @Attribute(.externalStorage) private var _itemListData = Data()
+
 }
 
 extension [TranscriptionEntity.Item] {

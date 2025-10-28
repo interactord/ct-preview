@@ -1,9 +1,9 @@
 import Architecture
 import ComposableArchitecture
+import Domain
 import Foundation
 import LinkNavigatorSwiftUI
 import SwiftUI
-import Domain
 
 struct RoomRouteBuilder {
 
@@ -14,7 +14,7 @@ struct RoomRouteBuilder {
     return .init(matchPath: matchPath) { navigator, items, diContainer -> AnyView? in
       guard let env: DashboardUseCaseGroup = diContainer.resolve() else { return .none }
       guard let item: RoomInformation = items.decoded() else { return .none }
-      
+
       return AnyView(RoomPage(
         store: .init(
           initialState: RoomReducer.State(item: item),

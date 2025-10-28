@@ -33,7 +33,6 @@ public struct ListeningModeReducer {
       case .updateItem(let item):
         guard let pickIdx = state.contentViewState.finalList.firstIndex(where: { $0.id == item.id }) else { return .none }
         state.contentViewState.finalList[pickIdx] = item
-        print("AAAA")
         return sideEffect.createOrUpdateRoomInformation(room: state.roomInformation, item: item)
 
       case .updateStartLanguageItem(let item):
@@ -59,6 +58,9 @@ public struct ListeningModeReducer {
 
       case .routeToBack:
         return sideEffect.routeToBack()
+
+      case .routeToHistoryList:
+        return sideEffect.routeToHistoryList()
 
       case .fetchLanguageItemList(let result):
         state.fetchLanguageItemList.isLoading = false
@@ -140,6 +142,7 @@ extension ListeningModeReducer {
     case stopRecording
 
     case routeToBack
+    case routeToHistoryList
 
     case fetchLanguageItemList(Result<[LanguageEntity.Item], CompositeError>)
     case fetchTranscriptItem(TranscriptionEntity.Item)

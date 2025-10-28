@@ -2,6 +2,8 @@ import Domain
 import Foundation
 import SwiftData
 
+// MARK: - RoomUseCasePlatform
+
 public struct RoomUseCasePlatform: Sendable {
 
   @MainActor
@@ -12,16 +14,20 @@ public struct RoomUseCasePlatform: Sendable {
       RoomInformationModel.self
     ])
 
-    self.dbManager = .init(
+    dbManager = .init(
       schema: schema,
       modelConfiguration: .init(
         schema: schema,
-        isStoredInMemoryOnly: false))
+        isStoredInMemoryOnly: false
+      )
+    )
   }
 
   let loggingUseCase: LoggingUseCase
   let dbManager: DatabaseManagerPlatform
 }
+
+// MARK: RoomUseCase
 
 extension RoomUseCasePlatform: RoomUseCase {
   @MainActor
@@ -33,8 +39,13 @@ extension RoomUseCasePlatform: RoomUseCase {
   @MainActor
   public func update(roomID: String, item: TranscriptionEntity.Item) async throws -> TranscriptionEntity.Item {
     guard let pick: RoomInformationModel = try dbManager.fetch(id: roomID) else { return item }
-    guard let pickID = pick.itemList.lastIndex(where: { $0.id == item.id }) else { return item }
-    pick.itemList[pickID] = item
+    if let pickID = pick.itemList.lastIndex(where: { $0.id == item.id }) {
+      pick.itemList[pickID] = item
+    } else {
+      pick.itemList.append(item)
+    }
+    _ = try dbManager.save(model: pick)
+
     return item
   }
 
@@ -58,12 +69,12 @@ extension RoomUseCasePlatform: RoomUseCase {
 
 extension RoomInformation {
   fileprivate func serialized() -> RoomInformationModel {
-    .init(id: id, title: title, createAt: createAt, itemList: itemList)
+    .init(id: id, title: title, createAt: createAt, itemList: itemList, summery: summery)
   }
 }
 
 extension RoomInformationModel {
   fileprivate func serialized() -> RoomInformation {
-    .init(id: id, title: title, createAt: createAt, itemList: itemList)
+    .init(id: id, title: title, createAt: createAt, itemList: itemList, summery: summery)
   }
 }

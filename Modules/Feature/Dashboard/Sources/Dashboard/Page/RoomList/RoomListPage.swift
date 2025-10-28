@@ -4,6 +4,8 @@ import DesignSystem
 import Domain
 import SwiftUI
 
+// MARK: - RoomListPage
+
 struct RoomListPage {
 
   init(store: StoreOf<RoomListReducer>) {
@@ -13,19 +15,19 @@ struct RoomListPage {
   @Bindable private var store: StoreOf<RoomListReducer>
 }
 
-extension RoomListPage {
-
-}
-
 extension RoomListPage: View {
 
   var body: some View {
     List(store.fetchRoomList.value) { item in
       RoomItem(
         item: item,
-        tapAction: { store.send(.routeToRoomDetail($0)) })
+        tapAction: { store.send(.routeToRoomDetail($0)) }
+      )
     }
     .scrollContentBackground(.hidden)
+    .listRowBackground(Color.clear)
+    .listRowSeparator(.hidden)
+    .listStyle(.plain)
     .toolbar {
       ToolbarItemGroup(placement: .navigation) {
         Button(action: { store.send(.routeToBack) }) {
@@ -56,7 +58,6 @@ extension RoomListPage: View {
     }
   }
 }
-
 
 extension RoomListPage {
   struct RoomItem {
@@ -92,7 +93,6 @@ extension RoomListPage.RoomItem: View {
   }
 }
 
-
 extension Double {
   func toLocalized() -> String {
     let date = Date(timeIntervalSince1970: self)
@@ -100,8 +100,8 @@ extension Double {
   }
 }
 
-private extension DateFormatter {
-  static let localizedYMDHM: DateFormatter = {
+extension DateFormatter {
+  fileprivate static let localizedYMDHM: DateFormatter = {
     let formatter = DateFormatter()
     // Follow user's current settings (locale, calendar, timeZone)
     formatter.locale = .current
